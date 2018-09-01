@@ -6,7 +6,7 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/12 01:24:53 by toliver           #+#    #+#              #
-#    Updated: 2018/09/01 01:30:45 by toliver          ###   ########.fr        #
+#    Updated: 2018/09/01 02:24:25 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,9 @@ NAME = minishell
 CFLAGS = -Werror -Wextra -Wall -g3 -fsanitize=address,undefined
 
 FILES = minishell \
+		init \
+		loop \
+		exit \
 
 SRC = $(addsuffix .c, $(FILES))
 
