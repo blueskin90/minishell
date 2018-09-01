@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 01:19:14 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/01 03:52:10 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/01 23:50:08 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,15 @@
 
 typedef struct	s_var
 {
-	char		*name;
-	char		*value;
+	char			*name;
+	char			*value;
+	struct s_var	*next;
 }				t_var;
 
 typedef	struct	s_envs
 {
 	int			running;
-	char		**envp;
+	t_var		*envp;
 }				t_envs;
 
 /*
@@ -71,6 +72,8 @@ int				printenv(t_envs *env);
 **	Initialiation functions
 */
 
+int				addenvequal(char *variable, t_envs *env);
+int				addenvvar(char *name, char *value, t_envs *env);
 int				init(int argc, char **argv, char **envp, t_envs *env);
 int				copyenv(char **envp, t_envs *env);
 int				setoptions(int argc, char **argv, t_envs *env);

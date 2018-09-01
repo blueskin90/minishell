@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:23:08 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/01 09:01:57 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/01 23:50:05 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int				printenv(t_envs *env)
 	return (1);
 }
 
-int				echo(char **instructions)
+int				echo(char **instructions) // penser a echo $FOO
 {
 	int			i;
 	int			isfirst;
@@ -150,51 +150,7 @@ int				wordsize(char *line)
 	return (i);
 }
 
-int				addstring(char *str, char **dst, char c, char ***tab)
-{
-	(void)dst;
-	(void)str;
-	(void)tab;
-	(void)c;
-	int			i;
-
-	i = 0;
-	while ((*tab)[i] != *dst)
-	{
-		i++;
-	}
-	ft_printf("last = '%s' verif = '%s'\n", *tab[i], *dst);
-	return (0);
-}
-
-int				waitforquotes(char c, char ***tab)
-{
-	int			isover;
-//	char		*str;
-//	int			returnval;
-
-	isover = 0;
-	/*
-	while (isover != 1)
-	{
-		if (c == '\'')
-			ft_printf("quote>");
-		else
-			ft_printf("dquote>");
-		if (ft_get_next_line(1, &str) == -1)
-			return (-1);
-		if ((returnval = addstring(str, dst, c, tab)) == -1)
-			return (-1);
-		if (returnval == 0)
-			isover = 1;
-		free(str);
-	}
-	*/
-	(void)c;
-	(void)tab;
-	return (1);
-}
-int				wordcopy(char *line, char **dst, char ***tab)
+int				wordcopy(char *line, char **dst)
 {
 	char		c;
 	int			i;
@@ -210,8 +166,6 @@ int				wordcopy(char *line, char **dst, char ***tab)
 			i++;
 		}
 		(*dst)[i] = '\0';
-	if (line[i] != c)
-			return (waitforquotes(c, tab));
 		return (1);
 	}
 	while (line[i] && !iswhitespace(line[i]) && !isquote(line[i]))
@@ -220,7 +174,6 @@ int				wordcopy(char *line, char **dst, char ***tab)
 		i++;
 	}
 	(*dst)[i] = '\0';
-	(void)tab;
 	return (1);
 }
 
@@ -242,17 +195,15 @@ int				splitinstructions(char *line, char ***instructions)
 		{
 			if (!(split[i] = (char*)malloc(sizeof(char) * (wordsize(line) + 1))))
 				return (-1);
-			if (wordcopy(line, &split[i], &split) == -1)
+			if (wordcopy(line, &split[i]) == -1)
 				return (-1);
 			line += get_nextword(line);
 			i++;
 		}
 	}
 	*instructions = split;
-	return (1); // penser si le dernier est encore ouvert
+	return (1);
 }
-
-// faire un nouveau splitinstructions en liste chainee, plus pratix
 
 int				splitline(char *line, t_list *ptr)
 {
@@ -272,19 +223,54 @@ int				splitline(char *line, t_list *ptr)
 	return (1);
 }
 
+int				unsetenvshell(char **split, t_envs *env)
+{
+	(void)split;
+	(void)env;
+	return (1);
+}
+
+int				setenvshell(char **split, t_envs *env)
+{
+	int			i;
+
+	i = 0;
+	while (split[i])
+	{
+		ft_putstr(split[i]);
+		i++;
+	}
+	if (i < 1 || i > 3)
+		ft_printf("Usage: setenv [varname] [varvalue] OR setenv [varname]=[varvalue]\n");
+	else if (i == 1 && ft_strchr(split[1], '='))
+		addenvequal(split[i], env)
+	else if (i == 1 && ft_strchr(split[1], '='))
+		addenvvar(split[i], NULL, env);
+	else if (i == 2 && ft_strchr(split[1], '='))
+		ft_printf("Usage: setenv [varname] [varvalue] OR setenv [varname]=[varvalue]\n");
+	else
+		setenvvar(split[1], split[2], env);
+	return (1);
+}
+
 int				execline(t_envs *env, char *line)
 {
 	char		**splittedline;
 
 	if (splitinstructions(line, &splittedline) == -1)
 		env->running = -1;
-	// a la place de splitinstructions (comme splitwhitespaces, faire un split en liste chainee)
 	if (!splittedline || !splittedline[0])
 		return (1);
 	if (ft_strcmp(splittedline[0], "env") == 0)
 		printenv(env);
 	else if (ft_strcmp(splittedline[0], "echo") == 0)
 		echo(splittedline);
+	else if (ft_strcmp(splittedline[0], "setenv") == 0)
+		setenvshell(splittedline + 1, env);
+	else if (ft_strcmp(splittedline[0], "unsetenv") == 0)
+		unsetenvshell(splittedline + 1, env);
+	else
+		ft_printf("command not found: %s\n", splittedline[0]);
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:22:43 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/01 03:08:00 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/01 23:50:04 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,37 @@ int				setoptions(int argc, char **argv, t_envs *env)
 	(void)argc;
 	(void)argv;
 	(void)env;
+	return (1);
+}
+
+int				addenvequal(char *variable, t_envs *env)
+{
+	(void)variable;
+	(void)env;
+	return (1);
+}
+
+int				addenvvar(char *name, char *value, t_envs *env)
+{
+	t_var		*var;
+	t_var		*ptr;
+
+	if (!(var = (t_envs*)malloc(sizeof(t_envs))))
+		return (-1);
+	var->name = name;
+	if (value)
+		var->value = value;
+	else
+	{	
+		if (!(var->value = (char*)malloc(sizeof(char))))
+			return (-1);
+		var->value[0] = '\0';
+	}
+	var->next = NULL;
+	ptr = env->envp;
+	while (ptr->next)
+		ptr = ptr->next;
+	ptr->next = var;
 	return (1);
 }
 
