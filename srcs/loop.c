@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:23:08 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/01 23:50:05 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/02 01:44:53 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,81 @@
 
 int				printenv(t_envs *env)
 {
-	int			i;
+	t_var		*ptr;
 
-	i = 0;
-	while (env->envp && env->envp[i])
+	ptr = env->envp;
+	while (ptr)
 	{
-		ft_putendl(env->envp[i]);
-		i++;
+		ft_printf("%s=%s\n", ptr->name, ptr->value);
+		ptr = ptr->next;
 	}
 	return (1);
 }
 
-int				echo(char **instructions) // penser a echo $FOO
+int				printvariable(char *str, int len, t_envs *env)
+{
+	char		c;
+	t_var		*ptr;
+	char		*name;
+
+	c = str[len];
+	str[len] = '\0';
+	ptr = env->envp;
+	name = ft_strdup(str);
+	capitalize(name);
+	while (ptr && ft_strcmp(name, ptr->name))
+		ptr = ptr->next;
+	if (ptr)
+		ft_putstr(ptr->value);
+	str[len] = c;
+	return (1);
+}
+
+int				echowithvariable(char *str, t_envs *env)
+{
+	int			i;
+	int			ii;
+
+	i = 0;
+	ii = 0;
+	while (str[i] != '$')
+	{
+		ft_putchar(str[i]);
+		i++;
+	}
+	i++;
+	while (str[i + ii] && iswhitespace(str[i + ii]) == 0)
+		ii++;
+//	ft_printf("\n|%.*s| i = %d ii = %d\n", ii, str + i, i, ii);
+	printvariable(str + i, ii, env);
+	if (str[i + ii])
+		echostr(str + i + ii, env);
+	return (1);
+}
+
+int				echostr(char *str, t_envs *env)
+{
+	int			i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '$' && ((i > 0 && str[i] - 1 != '/') || i == 0))
+		{
+			echowithvariable(str, env);
+			break;
+		}
+		if (str[i] == '\\')
+			i++;
+		ft_putchar(str[i]);
+		i++;
+	}
+//	if (str[i] == '\0')
+//		ft_putstr(str); // ne pas faire un putstr normal, escape les /
+	return (1);
+}
+
+int				echo(char **instructions, t_envs *env) // penser a echo $FOO
 {
 	int			i;
 	int			isfirst;
@@ -38,7 +101,7 @@ int				echo(char **instructions) // penser a echo $FOO
 			ft_putchar(' ');
 		else
 			isfirst = 0;
-		ft_putstr(instructions[i]);
+		echostr(instructions[i], env);
 		i++;
 	}
 	return (1);
@@ -223,10 +286,51 @@ int				splitline(char *line, t_list *ptr)
 	return (1);
 }
 
+int				delnode(t_var *todel, t_var **list)
+{
+	t_var		*ptr;
+	t_var		*tmp;
+
+	if (*list == todel)
+	{
+		tmp = *list;
+		*list = (*list)->next;
+		free(tmp->name);
+		free(tmp->value);
+		free(tmp);
+	}
+	else
+	{
+		ptr = *list;
+		while (ptr && ptr->next != todel)
+			ptr = ptr->next;
+		if (ptr->next == todel)
+		{
+			tmp = ptr->next;
+			ptr->next = tmp->next;
+			free(tmp->name);
+			free(tmp->value);
+			free(tmp);
+		}
+	}
+	return (1);
+}
+
 int				unsetenvshell(char **split, t_envs *env)
 {
-	(void)split;
-	(void)env;
+	t_var		*ptr;
+
+	capitalize(split[0]);
+	ptr = env->envp;
+	while (ptr)
+	{
+		if (ft_strcmp(ptr->name, split[0]) == 0)
+		{
+			delnode(ptr, &env->envp);
+			ptr = env->envp;
+		}
+		ptr = ptr->next;
+	}	
 	return (1);
 }
 
@@ -236,20 +340,17 @@ int				setenvshell(char **split, t_envs *env)
 
 	i = 0;
 	while (split[i])
-	{
-		ft_putstr(split[i]);
 		i++;
-	}
 	if (i < 1 || i > 3)
 		ft_printf("Usage: setenv [varname] [varvalue] OR setenv [varname]=[varvalue]\n");
-	else if (i == 1 && ft_strchr(split[1], '='))
-		addenvequal(split[i], env)
-	else if (i == 1 && ft_strchr(split[1], '='))
-		addenvvar(split[i], NULL, env);
-	else if (i == 2 && ft_strchr(split[1], '='))
+	else if (i == 1 && ft_strchr(split[0], '='))
+		addenvequal(split[0], env);
+	else if (i == 1 && !ft_strchr(split[0], '='))
+		addenvvar(split[0], NULL, env);
+	else if (i == 2 && ft_strchr(split[0], '='))
 		ft_printf("Usage: setenv [varname] [varvalue] OR setenv [varname]=[varvalue]\n");
 	else
-		setenvvar(split[1], split[2], env);
+		addenvvar(capitalize(split[0]), split[1], env);
 	return (1);
 }
 
@@ -264,13 +365,14 @@ int				execline(t_envs *env, char *line)
 	if (ft_strcmp(splittedline[0], "env") == 0)
 		printenv(env);
 	else if (ft_strcmp(splittedline[0], "echo") == 0)
-		echo(splittedline);
+		echo(splittedline, env);
 	else if (ft_strcmp(splittedline[0], "setenv") == 0)
 		setenvshell(splittedline + 1, env);
 	else if (ft_strcmp(splittedline[0], "unsetenv") == 0)
 		unsetenvshell(splittedline + 1, env);
 	else
 		ft_printf("command not found: %s\n", splittedline[0]);
+	//freesplittedline
 	return (1);
 }
 

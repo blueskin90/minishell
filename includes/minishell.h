@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 01:19:14 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/01 23:50:08 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/02 01:38:20 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,4 +78,7 @@ int				init(int argc, char **argv, char **envp, t_envs *env);
 int				copyenv(char **envp, t_envs *env);
 int				setoptions(int argc, char **argv, t_envs *env);
 
+char			*capitalize(char *str);
+int				iswhitespace(char c);
+int				echostr(char *str, t_envs *env);
 #endif
