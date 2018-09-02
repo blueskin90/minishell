@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:22:43 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/02 03:17:40 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/02 03:33:33 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,8 @@ int				incrementshlevel(t_envs *env)
 		free(ptr->value);
 		ptr->value = value;
 	}
+	else
+		addenvvar("SHLVL", "1", env);
 	return (1);
 }
 
