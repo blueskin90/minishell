@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:23:08 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/02 03:12:20 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/02 03:56:31 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -400,6 +400,13 @@ int				freesplittedline(char ***splittedline)
 	return (1);
 }
 
+int				cdshell(char **splittedline, t_envs *env)
+{
+	(void)splittedline;
+	(void)env;
+	return (1); // faire le cd, allez hop.
+}
+
 int				execline(t_envs *env, char *line)
 {
 	char		**splittedline;
@@ -420,7 +427,11 @@ int				execline(t_envs *env, char *line)
 		pwdshell(splittedline + 1, env);
 	else if (ft_strcmp(splittedline[0], "exit") == 0)
 		exitshell(env);
-	else
+	else if (ft_strcmp(splittedline[0], "zigounette") == 0)
+		ft_printf("──────────\n─▄▄▄────────────────────\n█░░░▀▄▄─────────────────\n▀▄░░░▄▀▀▄────────────────\n─▀▄▄▀░░░░▀▄─────────────\n───▀▄░░░░░░▀▄───────────\n─────▀▄░░░░░░▀▄▄────────\n──────▄▀░░░░░░░░░▀▄▌────\n──────█░░░░░▄░░░░░██────\n──────█▀▄▄▄▄▀▄▄▄▄▀██────\n");
+	else if (ft_strcmp(splittedline[0], "cd"))
+		cdshell(splittedline + 1, env);
+	else // tenter l'execution sinon command not found
 		ft_printf("command not found: %s\n", splittedline[0]);
 	freesplittedline(&splittedline);
 	return (1);
