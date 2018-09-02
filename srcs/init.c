@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:22:43 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/02 01:29:14 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/02 03:17:40 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,24 @@ char			*capitalize(char *str)
 	return (str);
 }
 
+int				pwdexist(t_var *list)
+{
+	t_var		*ptr;
+
+	ptr = list;
+	while (ptr)
+	{
+		if (ft_strcmp(ptr->name, "PWD"))
+			return(1);
+		ptr = ptr->next;
+	}
+	return (0);
+}
+
 int				addenvequal(char *variable, t_envs *env)
 {
 	char		*name;
-	char		*value;
+//	char		*value;
 	int			i;
 
 	i = 0;
@@ -51,11 +65,6 @@ int				addenvequal(char *variable, t_envs *env)
 	ft_strncpy(name, variable, i);
 	name[i] = '\0';
 	capitalize(name);
-	if (!(value = ft_strdup(variable + i + 1)))
-	{
-		env->running = -1;
-		return (-1);
-	}
 	if (addenvvar(name, variable + i + 1, env) == -1)
 		return (-1);
 	free(name);
@@ -67,15 +76,18 @@ int				addenv(t_var **list, t_var *node)
 	t_var		*tmp;
 
 	tmp = *list;
-	while (tmp && tmp->next && tmp->name != node->name)
+	while (tmp && tmp->next && ft_strcmp(tmp->name,node->name))
 		tmp = tmp->next;
 	if (!tmp)
 		*list = node;
 	else if (!ft_strcmp(tmp->name, node->name))
 	{
 		free(node->name);
-		free(tmp->value);
-		tmp->value = node->value;
+		if (ft_strcmp(tmp->name, "PWD"))
+		{
+			free(tmp->value);
+			tmp->value = node->value;
+		}
 		free(node);
 	}
 	else
@@ -119,6 +131,24 @@ int				addenvvar(char *name, char *value, t_envs *env)
 	return (1);
 }
 
+int				incrementshlevel(t_envs *env)
+{
+	t_var		*ptr;
+	char		*value;
+
+	ptr = env->envp;
+	while (ptr && ft_strcmp(ptr->name, "SHLVL"))
+		ptr = ptr->next;
+	if (ptr)
+	{
+		if (!(value = ft_itoa(ft_atoi(ptr->value) + 1)))
+			env->running = -1;
+		free(ptr->value);
+		ptr->value = value;
+	}
+	return (1);
+}
+
 int				copyenv(char **envp, t_envs *env)
 {
 	int			i;
@@ -130,15 +160,24 @@ int				copyenv(char **envp, t_envs *env)
 			return (0);
 		i++;
 	}
+	if (!pwdexist(env->envp))
+		return (-3);
+	incrementshlevel(env);
 	return (1);
 }
 
 int				init(int argc, char **argv, char **envp, t_envs *env)
 {
+	int			retval;
 	setoptions(argc, argv, env); // set les options au lancement s'il y en a
-	if (!copyenv(envp, env)) // copie l'environnement dans le *env
+	if ((retval = copyenv(envp, env)) == 0) // copie l'environnement dans le *env
 	{
 		env->running = -1;
+		return (1);
+	}
+	else if (retval == -3)
+	{
+		env->running = -3;
 		return (1);
 	}
 	if (!envp || envp[0] == NULL)

@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 01:19:14 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/02 01:38:20 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/02 03:17:57 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 
 # define MALLOC_FAILED -1
 # define ENV_LOADFAIL -2
+# define ENVPWD_LOADFAIL -3
 
 typedef struct	s_var
 {
@@ -81,4 +82,5 @@ int				setoptions(int argc, char **argv, t_envs *env);
 char			*capitalize(char *str);
 int				iswhitespace(char c);
 int				echostr(char *str, t_envs *env);
+int				exitshell(t_envs *env);
 #endif

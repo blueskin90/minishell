@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:23:08 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/02 01:44:53 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/02 03:12:20 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ int				echowithvariable(char *str, t_envs *env)
 	i++;
 	while (str[i + ii] && iswhitespace(str[i + ii]) == 0)
 		ii++;
-//	ft_printf("\n|%.*s| i = %d ii = %d\n", ii, str + i, i, ii);
 	printvariable(str + i, ii, env);
 	if (str[i + ii])
 		echostr(str + i + ii, env);
@@ -88,7 +87,7 @@ int				echostr(char *str, t_envs *env)
 	return (1);
 }
 
-int				echo(char **instructions, t_envs *env) // penser a echo $FOO
+int				echo(char **instructions, t_envs *env)
 {
 	int			i;
 	int			isfirst;
@@ -319,17 +318,31 @@ int				delnode(t_var *todel, t_var **list)
 int				unsetenvshell(char **split, t_envs *env)
 {
 	t_var		*ptr;
+	int			i;
 
-	capitalize(split[0]);
+	i = 0;
 	ptr = env->envp;
-	while (ptr)
+	if (ft_strcmp(split[0], "PWD") == 0)
+		return (1);
+	while (ptr && split[i])
 	{
-		if (ft_strcmp(ptr->name, split[0]) == 0)
+		capitalize(split[i]);
+		if (ft_strcmp(split[i], "PWD") == 0)
+			i++;
+		else
 		{
-			delnode(ptr, &env->envp);
-			ptr = env->envp;
+			if (ft_strcmp(ptr->name, split[i]) == 0)
+			{
+				delnode(ptr, &env->envp);
+				ptr = env->envp;
+			}
+			ptr = ptr->next;
+			if (ptr == NULL && split[i])
+			{
+				i++;
+				ptr = env->envp;
+			}
 		}
-		ptr = ptr->next;
 	}	
 	return (1);
 }
@@ -354,6 +367,39 @@ int				setenvshell(char **split, t_envs *env)
 	return (1);
 }
 
+int				pwdshell(char **splittedline, t_envs *env)
+{
+	t_var		*ptr;
+
+	if (splittedline[0])
+		ft_printf("pwd: too many arguments\n");
+	else
+	{
+		ptr = env->envp;
+		while (ptr && ft_strcmp(ptr->name, "PWD") != 0)
+			ptr = ptr->next;
+		if (ptr)
+			ft_printf("%s\n", ptr->value);
+		else
+			ft_printf("env variable: $PWD is not set\n");
+	}
+	return (1);
+}
+
+int				freesplittedline(char ***splittedline)
+{
+	int			i;
+	
+	i = 0;
+	while ((*splittedline)[i])
+	{
+		free((*splittedline)[i]);
+		i++;
+	}
+	free(*splittedline);
+	return (1);
+}
+
 int				execline(t_envs *env, char *line)
 {
 	char		**splittedline;
@@ -370,9 +416,13 @@ int				execline(t_envs *env, char *line)
 		setenvshell(splittedline + 1, env);
 	else if (ft_strcmp(splittedline[0], "unsetenv") == 0)
 		unsetenvshell(splittedline + 1, env);
+	else if (ft_strcmp(splittedline[0], "pwd") == 0)
+		pwdshell(splittedline + 1, env);
+	else if (ft_strcmp(splittedline[0], "exit") == 0)
+		exitshell(env);
 	else
 		ft_printf("command not found: %s\n", splittedline[0]);
-	//freesplittedline
+	freesplittedline(&splittedline);
 	return (1);
 }
 
