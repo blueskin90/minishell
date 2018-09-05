@@ -6,7 +6,7 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/12 01:24:53 by toliver           #+#    #+#              #
-#    Updated: 2018/09/02 03:06:58 by toliver          ###   ########.fr        #
+#    Updated: 2018/09/05 01:59:00 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,15 @@ FILES = minishell \
 		init \
 		loop \
 		exit \
+		splitline \
+		testing \
+		utility \
+		echo \
+		env \
+		setenv \
+		unsetenv \
+		pwd \
+		cd \
 
 SRC = $(addsuffix .c, $(FILES))
 
