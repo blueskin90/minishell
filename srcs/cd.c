@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/05 01:58:44 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/06 12:52:39 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/06 20:06:14 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,16 @@ int				isabsolute(char *str)
 	return (0);
 }
 
+// FAIRE CETTE FONCTION
 int				isvalidpath(char *path)
 {
-	(void)path; // faire le printf de is not a valid path
+	struct stat	buf[1];
+
+	if (lstat(path, buf) == -1)
+	{
+		ft_printf("wrong path or you dont have rights to access: %s\n", path);
+		return (0);
+	}
 	return (1);
 }
 
@@ -53,6 +60,58 @@ int				cdabsolute(char *path, t_envs *env)
 	return (1);
 }
 
+int				gobackpath(char *path)
+{
+	int			i;
+
+	i = ft_strlen(path);
+	if (i > 0)
+		i--;
+	while (path[i] != '/' && i > 0)
+		i--;
+	if (i > 0)
+		path[i] = '\0';
+	else
+		path[1] = '\0';
+	return (1);
+}
+
+int				cdwithpoint(char *path, t_envs *env, char *actualpath)
+{
+	int			i;
+	int			pathstrlen;
+	char		*newpath;
+
+	i = 0;
+	pathstrlen = ft_strlen(path);
+	while (path[i] == '.' && path[i + 1] == '.'
+			&& (path[i + 2] == '/' || path[i + 2] == '\0') && i < pathstrlen)
+	{
+		gobackpath(actualpath);
+		i += (path[i + 2] == '\0') ? 2 : 3;
+	}
+	pathstrlen = ft_strlen(path + i);
+	i = ft_strlen(actualpath + i) + ((ft_strlen(path) > 0) ? pathstrlen + 1 : 0);
+	if (!(newpath = (char*)malloc(sizeof(char) * i)))
+		return (returnval(-1, env));
+	ft_strcpy(newpath, actualpath);
+	if (pathstrlen)
+	{
+		ft_strcat(newpath, "/");
+		ft_strcat(newpath, path);
+	}
+	free(actualpath);
+	if (isvalidpath(newpath))
+	{
+		if (swapoldpwd(env) == -1 || addenvvar("PWD", newpath, env) == -1)
+			returnval(-1, env);
+		free(newpath);
+	}
+	else
+		ft_printf("wrong path or you dont have rights to access: %s\n", path);
+	return (1);
+}
+
 int				cdrelative(char *path, t_envs *env)
 {
 	char		*realpath;
@@ -65,6 +124,9 @@ int				cdrelative(char *path, t_envs *env)
 			returnval(-1, env);
 		if (path[ft_strlen(path) - 1] == '/')
 			path[ft_strlen(path) - 1] = '\0';
+		if (path[0] == '.' && path[1] == '.'
+				&& (path[2] == '/' || path[2] == '\0'))
+			return (cdwithpoint(path, env, actualpath));
 		mallocsize = ft_strlen(actualpath) + ft_strlen(path) + 2;
 		if (!(realpath = (char*)malloc(sizeof(char) * mallocsize)))
 			returnval(-1, env);
@@ -100,7 +162,7 @@ int				cdhome(char *linetoexpand, t_envs *env)
 			ft_strcat(realpath, linetoexpand + 1);
 		if (isvalidpath(realpath))
 		{
-			if (swapoldpwd(env) == -1 || addenvvar("PWD", realpath, env))
+			if (swapoldpwd(env) == -1 || addenvvar("PWD", realpath, env) == -1)
 				returnval(-1, env);
 			free(realpath);
 		}
