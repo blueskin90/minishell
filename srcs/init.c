@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:22:43 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/04 21:33:03 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/05 16:41:04 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ int				addenvequal(char *variable, t_envs *env)
 	}
 	ft_strncpy(name, variable, i);
 	name[i] = '\0';
-	capitalize(name);
 	if (addenvvar(name, variable + i + 1, env) == -1)
 		return (-1);
 	free(name);
@@ -43,14 +42,11 @@ int				addenv(t_var **list, t_var *node)
 		tmp = tmp->next;
 	if (!tmp)
 		*list = node;
-	else if (!ft_strcmp(tmp->name, node->name))
+	else if (ft_strcmp(tmp->name, node->name) == 0)
 	{
 		free(node->name);
-		if (ft_strcmp(tmp->name, "PWD"))
-		{
-			free(tmp->value);
-			tmp->value = node->value;
-		}
+		free(tmp->value);
+		tmp->value = node->value;
 		free(node);
 	}
 	else
@@ -93,8 +89,6 @@ int				copyenv(char **envp, t_envs *env)
 			return (0);
 		i++;
 	}
-	if (!pwdexist(env->envp))
-		return (-3);
 	incrementshlevel(env);
 	return (1);
 }
@@ -107,11 +101,6 @@ int				init(int argc, char **argv, char **envp, t_envs *env)
 	if ((retval = copyenv(envp, env)) == 0)
 	{
 		env->running = -1;
-		return (1);
-	}
-	else if (retval == -3)
-	{
-		env->running = -3;
 		return (1);
 	}
 	if (!envp || envp[0] == NULL)

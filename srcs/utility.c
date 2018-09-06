@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/04 21:19:15 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/04 21:34:22 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/05 16:30:44 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,55 @@ int				pwdexist(t_var *list)
 	ptr = list;
 	while (ptr)
 	{
-		if (ft_strcmp(ptr->name, "PWD"))
+		if (ft_strcmp(ptr->name, "PWD") == 0)
 			return (1);
 		ptr = ptr->next;
 	}
 	return (0);
 }
+
+int				envvarexist(char *str, t_var *list)
+{
+	t_var		*ptr;
+
+	ptr = list;
+	while (ptr)
+	{
+		if (ft_strcmp(ptr->name, str) == 0)
+			return (1);
+		ptr = ptr->next;
+	}
+	return (0);
+}
+
+int				printvarvalue(char *str, t_var *list)
+{
+	t_var		*ptr;
+
+	ptr = list;
+	while (ptr)
+	{
+		if (ft_strcmp(ptr->name, str) == 0)
+			ft_putstr(ptr->value);
+		ptr = ptr->next;
+	}
+	return (0);
+}
+
+char			*getvarvalue(char *str, t_var *list)
+{
+	t_var		*ptr;
+
+	ptr = list;
+	while (ptr)
+	{
+		if (ft_strcmp(ptr->name, str) == 0)
+			return(ptr->value);
+		ptr = ptr->next;
+	}
+	return (NULL);
+}
+
 
 int				isquote(char c)
 {

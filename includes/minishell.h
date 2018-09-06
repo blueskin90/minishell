@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 01:19:14 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/05 02:01:54 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/06 12:53:02 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,10 @@ int				iswhitespace(char c);
 int				isquote(char c);
 int				incrementshlevel(t_envs *env);
 int				pwdexist(t_var *list);
+int				envvarexist(char *str, t_var *list);
 int				returnval(int val, t_envs *env);
+int				printvarvalue(char *str, t_var *list);
+char			*getvarvalue(char *str, t_var *list);
 
 /*
 ** Env function

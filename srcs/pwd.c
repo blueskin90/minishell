@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/05 01:57:56 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/05 01:58:31 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/05 16:16:00 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int				pwdshell(char **splittedline, t_envs *env)
 		if (ptr)
 			ft_printf("%s\n", ptr->value);
 		else
-			ft_printf("env variable: $PWD is not set\n");
+			ft_printf("env variable: PWD is not set\n");
 	}
 	return (1);
 }

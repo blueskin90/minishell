@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:23:08 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/05 01:59:03 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/05 16:41:13 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,14 @@ int				freesplittedline(char ***splittedline)
 	free(*splittedline);
 	return (1);
 }
+
+int				execprogram(char **splittedline, t_envs *env)
+{
+	ft_printf("command not found: %s\n", splittedline[0]);
+	(void)env;
+	return (1);
+}
+
 int				execline(t_envs *env, char *line)
 {
 	char		**splittedline;
@@ -44,10 +52,10 @@ int				execline(t_envs *env, char *line)
 		pwdshell(splittedline + 1, env);
 	else if (ft_strcmp(splittedline[0], "exit") == 0)
 		exitshell(env);
-	else if (ft_strcmp(splittedline[0], "cd"))
+	else if (ft_strcmp(splittedline[0], "cd") == 0)
 		cdshell(splittedline + 1, env);
-	else // tenter l'execution sinon command not found
-		ft_printf("command not found: %s\n", splittedline[0]);
+	else
+		execprogram(splittedline, env);		
 	freesplittedline(&splittedline);
 	return (1);
 }

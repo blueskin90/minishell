@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/04 22:45:48 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/05 00:56:18 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/05 16:29:28 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int				printvariable(char *str, int len, t_envs *env)
 	str[len] = '\0';
 	ptr = env->envp;
 	name = ft_strdup(str);
-	capitalize(name);
+//	capitalize(name);
 	while (ptr && ft_strcmp(name, ptr->name))
 		ptr = ptr->next;
 	if (ptr)
@@ -52,6 +52,11 @@ int				echostr(char *str, t_envs *env)
 	int			i;
 
 	i = 0;
+	if (str[0] == '~' && str[1] == '\0' && envvarexist("HOME", env->envp))
+	{
+		printvarvalue("HOME", env->envp);
+		i++;
+	}
 	while (str[i])
 	{
 		if (str[i] == '$' && ((i > 0 && str[i] - 1 != '\\') || i == 0))
