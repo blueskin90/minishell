@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/08 16:31:40 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/12 19:58:52 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/12 21:23:17 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,30 @@ int			exec(char *path, char **argv, t_envs *env)
 	return (1);
 }
 
+int			newpathalloc(char **newpath, char *path, char *endpath, t_envs *env)
+{
+	int		mallocsize;
+
+	mallocsize = ft_strlen(path) + 2 + ft_strlen(endpath);
+	if (!(*newpath = (char*)malloc(sizeof(char) * mallocsize)))
+		returnval(-1, env);
+	ft_strcpy(*newpath, path);
+	ft_strcat(*newpath, "/");
+	ft_strcat(*newpath, endpath);
+	return (1);
+}
+
+int			execb(char *newpath, char **splittedline, t_envs *env, char **path)
+{
+	if (access(newpath, X_OK) == -1)
+		ft_printf("minishell: permission denied: %s\n", splittedline[0]);
+	else
+		exec(newpath, splittedline, env);
+	free(newpath);
+	freeenv(path);
+	return (1);
+}
+
 int			execbuiltin(char **splittedline, t_envs *env)
 {
 	char	**path;
@@ -115,22 +139,11 @@ int			execbuiltin(char **splittedline, t_envs *env)
 	{
 		path = ft_strsplit(getvarvalue("PATH", env->envp), ':');
 		while (path && path[i])
-		{			
-			if (!(newpath = (char*)malloc(sizeof(char) * (ft_strlen(path[i]) + 2 + ft_strlen(splittedline[0])))))
+		{
+			if (newpathalloc(&newpath, path[i], splittedline[0], env) == -1)
 				returnval(-1, env);
-			ft_strcpy(newpath, path[i]);
-			ft_strcat(newpath, "/");
-			ft_strcat(newpath, splittedline[0]);
 			if (access(newpath, F_OK) != -1)
-			{
-				if (access(newpath, X_OK) == -1)
-					ft_printf("minishell: permission denied: %s\n",
-							splittedline[0]);
-				else
-					exec(newpath, splittedline, env);
-				free(newpath);
-				return (1);
-			}
+				return (execb(newpath, splittedline, env, path));
 			free(newpath);
 			i++;
 		}
@@ -144,30 +157,13 @@ int			execbuiltin(char **splittedline, t_envs *env)
 
 int			execabsolute(char **splittedline, t_envs *env)
 {
-	int		test;
-	pid_t	forked;
-	char	**newenv;
-
 	if (access(splittedline[0], F_OK) == -1)
-		ft_printf("minishell: no such file or directory: %s\n", splittedline[0]);
+		ft_printf("minishell: no such file or directory: %s\n",
+				splittedline[0]);
 	else if (access(splittedline[0], X_OK) == -1)
 		ft_printf("minishell: permission denied: %s\n", splittedline[0]);
 	else
-	{
-		if ((forked = fork()) == -1)
-			returnval(-4, env);
-		newenv = mallocenv(env);
-		if (env->running < 0)
-			return (-1);
-		if (forked == 0 && env->running > 0)
-		{
-			execve(splittedline[0], splittedline, newenv);
-			exit(1);
-		}
-		else
-			wait(&test);
-		freeenv(newenv);
-	}
+		exec(splittedline[0], splittedline, env);
 	return (1);
 }
 

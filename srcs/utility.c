@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/04 21:19:15 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/05 16:30:44 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/12 20:04:52 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,12 +96,11 @@ char			*getvarvalue(char *str, t_var *list)
 	while (ptr)
 	{
 		if (ft_strcmp(ptr->name, str) == 0)
-			return(ptr->value);
+			return (ptr->value);
 		ptr = ptr->next;
 	}
 	return (NULL);
 }
-
 
 int				isquote(char c)
 {

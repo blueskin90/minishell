@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/04 22:45:48 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/05 16:29:28 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/12 20:08:30 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ int				printvariable(char *str, int len, t_envs *env)
 	str[len] = '\0';
 	ptr = env->envp;
 	name = ft_strdup(str);
-//	capitalize(name);
 	while (ptr && ft_strcmp(name, ptr->name))
 		ptr = ptr->next;
 	if (ptr)

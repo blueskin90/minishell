@@ -6,11 +6,12 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:23:08 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/09 17:40:41 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/12 20:06:51 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 int				freesplittedline(char ***splittedline)
 {
 	int			i;
@@ -48,7 +49,7 @@ int				execline(t_envs *env, char *line)
 	else if (ft_strcmp(splittedline[0], "cd") == 0)
 		cdshell(splittedline + 1, env);
 	else
-		execprogram(splittedline, env);		
+		execprogram(splittedline, env);
 	freesplittedline(&splittedline);
 	return (1);
 }

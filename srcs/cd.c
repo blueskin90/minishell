@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/05 01:58:44 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/12 20:03:18 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/12 21:32:16 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,18 @@ int				gobackpath(char *path)
 	return (1);
 }
 
+int				cdend(char *pathtofree, char *realpath, t_envs *env)
+{
+	free(pathtofree);
+	if (isvalidpath(realpath))
+	{
+		if (swapoldpwd(env) == -1 || addenvvar("PWD", realpath, env) == -1)
+			returnval(-1, env);
+		free(realpath);
+	}
+	return (1);
+}
+
 int				cdwithpoint(char *path, t_envs *env, char *actualpath)
 {
 	int			i;
@@ -89,7 +101,8 @@ int				cdwithpoint(char *path, t_envs *env, char *actualpath)
 		i += (path[i + 2] == '\0') ? 2 : 3;
 	}
 	pathstrlen = ft_strlen(path + i);
-	i = ft_strlen(actualpath + i) + ((ft_strlen(path) > 0) ? pathstrlen + 1 : 0);
+	i = ft_strlen(actualpath + i) + ((ft_strlen(path) > 0)
+			? pathstrlen + 1 : 0);
 	if (!(newpath = (char*)malloc(sizeof(char) * i)))
 		return (returnval(-1, env));
 	ft_strcpy(newpath, actualpath);
@@ -98,16 +111,7 @@ int				cdwithpoint(char *path, t_envs *env, char *actualpath)
 		ft_strcat(newpath, "/");
 		ft_strcat(newpath, path);
 	}
-	free(actualpath);
-	if (isvalidpath(newpath))
-	{
-		if (swapoldpwd(env) == -1 || addenvvar("PWD", newpath, env) == -1)
-			returnval(-1, env);
-		free(newpath);
-	}
-	else
-		ft_printf("wrong path or you dont have rights to access: %s\n", path);
-	return (1);
+	return (cdend(actualpath, newpath, env));
 }
 
 int				cdrelative(char *path, t_envs *env)
@@ -131,13 +135,8 @@ int				cdrelative(char *path, t_envs *env)
 		ft_strcpy(realpath, actualpath);
 		ft_strcat(realpath, "/");
 		ft_strcat(realpath, path);
-		free(actualpath);
-		if (isvalidpath(realpath))
-		{
-			if (swapoldpwd(env) == -1 || addenvvar("PWD", realpath, env) == -1)
-				returnval(-1, env);
-			free(realpath);
-		}
+		if (cdend(actualpath, realpath, env) == -1)
+			returnval(-1, env);
 	}
 	else
 		ft_printf("cd with a relative path doesn't work if PWD is not set\n");

@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/05 01:57:30 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/05 16:08:46 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/12 20:05:34 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,27 +53,19 @@ int				unsetenvshell(char **split, t_envs *env)
 
 	i = 0;
 	ptr = env->envp;
-//	if (ft_strcmp(split[0], "PWD") == 0)
-//		return (1);
 	while (ptr && split[i])
 	{
-//		capitalize(split[i]);
-//		if (ft_strcmp(split[i], "PWD") == 0)
-//			i++;
-//		else
-//		{
-			if (ft_strcmp(ptr->name, split[i]) == 0)
-			{
-				delnode(ptr, &env->envp);
-				ptr = env->envp;
-			}
-			ptr = ptr->next;
-			if (ptr == NULL && split[i])
-			{
-				i++;
-				ptr = env->envp;
-			}
-//		}
+		if (ft_strcmp(ptr->name, split[i]) == 0)
+		{
+			delnode(ptr, &env->envp);
+			ptr = env->envp;
+		}
+		ptr = ptr->next;
+		if (ptr == NULL && split[i])
+		{
+			i++;
+			ptr = env->envp;
+		}
 	}
 	return (1);
 }
