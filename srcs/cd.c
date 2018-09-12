@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/05 01:58:44 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/08 16:58:38 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/12 20:03:18 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int				swapoldpwd(t_envs *env)
 
 int				cdabsolute(char *path, t_envs *env)
 {
-	if (path && path[ft_strlen(path) - 1] == '/')
+	if (path && path[ft_strlen(path) - 1] == '/' && ft_strlen(path) != 1)
 		path[ft_strlen(path) - 1] = '\0';
 	if (isvalidpath(path))
 	{
@@ -199,5 +199,7 @@ int				cdshell(char **splittedline, t_envs *env)
 		cdminus(env);
 	else
 		cdrelative(splittedline[0], env);
+	if (getvarvalue("PWD", env->envp))
+		chdir(getvarvalue("PWD", env->envp));
 	return (1);
 }

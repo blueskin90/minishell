@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/08 16:31:40 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/12 18:20:56 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/12 19:58:52 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,19 +80,62 @@ char		**mallocenv(t_envs *env)
 	return (newenv);
 }
 
-int			execbuiltin(char **splittedline, t_envs *env)
+int			exec(char *path, char **argv, t_envs *env)
 {
 	int		test;
-	char	**newenv;
 	pid_t	forked;
+	char	**newenv;
 
-	(void)env;
-	(void)test;
-	(void)newenv;
-	(void)forked;
+	if ((forked = fork()) == -1)
+		returnval(-4, env);
+	newenv = mallocenv(env);
+	if (env->running < 0)
+		return (-1);
+	if (forked == 0 && env->running > 0)
+	{
+		execve(path, argv, newenv);
+		exit(1);
+	}
+	else
+		wait(&test);
+	freeenv(newenv);
+	return (1);
+}
+
+int			execbuiltin(char **splittedline, t_envs *env)
+{
+	char	**path;
+	char	*newpath;
+	int		i;
+
+	path = NULL;
+	newpath = NULL;
+	i = 0;
 	if (envvarexist("PATH", env->envp))
 	{
-		ft_printf("go faire la fusion des path et des tests\n");
+		path = ft_strsplit(getvarvalue("PATH", env->envp), ':');
+		while (path && path[i])
+		{			
+			if (!(newpath = (char*)malloc(sizeof(char) * (ft_strlen(path[i]) + 2 + ft_strlen(splittedline[0])))))
+				returnval(-1, env);
+			ft_strcpy(newpath, path[i]);
+			ft_strcat(newpath, "/");
+			ft_strcat(newpath, splittedline[0]);
+			if (access(newpath, F_OK) != -1)
+			{
+				if (access(newpath, X_OK) == -1)
+					ft_printf("minishell: permission denied: %s\n",
+							splittedline[0]);
+				else
+					exec(newpath, splittedline, env);
+				free(newpath);
+				return (1);
+			}
+			free(newpath);
+			i++;
+		}
+		ft_printf("minishell: command not found: %s\n", splittedline[0]);
+		freeenv(path);
 	}
 	else
 		ft_printf("minishell: command not found: %s\n", splittedline[0]);
