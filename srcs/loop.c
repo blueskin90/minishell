@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:23:08 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/05 16:41:13 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/09 17:40:41 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,6 @@ int				freesplittedline(char ***splittedline)
 		i++;
 	}
 	free(*splittedline);
-	return (1);
-}
-
-int				execprogram(char **splittedline, t_envs *env)
-{
-	ft_printf("command not found: %s\n", splittedline[0]);
-	(void)env;
 	return (1);
 }
 
@@ -64,6 +57,7 @@ int				loop(t_envs *env)
 {
 	char		*str;
 
+	str = NULL;
 	while (env->running > 0)
 	{
 		ft_putstr("$>");
@@ -71,6 +65,7 @@ int				loop(t_envs *env)
 			env->running = MALLOC_FAILED;
 		execline(env, str);
 		free(str);
+		str = NULL;
 	}
 	return (1);
 }

@@ -6,7 +6,7 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/12 01:24:53 by toliver           #+#    #+#              #
-#    Updated: 2018/09/05 01:59:00 by toliver          ###   ########.fr        #
+#    Updated: 2018/09/08 19:14:41 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,7 @@ FILES = minishell \
 		unsetenv \
 		pwd \
 		cd \
+		exec \
 
 SRC = $(addsuffix .c, $(FILES))
 

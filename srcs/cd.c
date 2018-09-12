@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/05 01:58:44 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/06 20:06:14 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/08 16:58:38 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,15 @@ int				isabsolute(char *str)
 	return (0);
 }
 
-// FAIRE CETTE FONCTION
 int				isvalidpath(char *path)
 {
-	struct stat	buf[1];
-
-	if (lstat(path, buf) == -1)
-	{
-		ft_printf("wrong path or you dont have rights to access: %s\n", path);
-		return (0);
-	}
-	return (1);
+	if (access(path, F_OK) == -1)
+		ft_printf("minishell: no such file or directory: %s\n", path);
+	else if (access(path, X_OK) == -1)
+		ft_printf("cd: permission denied: %s\n", path);
+	else
+		return (1);
+	return (0);
 }
 
 int				swapoldpwd(t_envs *env)

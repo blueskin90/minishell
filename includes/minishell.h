@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 01:19:14 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/06 20:06:15 by toliver          ###   ########.fr       */
+/*   Updated: 2018/09/12 17:56:05 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # define MALLOC_FAILED -1
 # define ENV_LOADFAIL -2
 # define ENVPWD_LOADFAIL -3
+# define FORK_FAIL -4
 
 typedef struct	s_var
 {
@@ -125,4 +126,6 @@ int				pwdshell(char **splittedline, t_envs *env);
 int				setoptions(int argc, char **argv, t_envs *env); // set les options au lancement s'il y a lieu
 int				echostr(char *str, t_envs *env);
 int				cdshell(char **splittedline, t_envs *env);
+int				execprogram(char **splittedline, t_envs *env);
+
 #endif
