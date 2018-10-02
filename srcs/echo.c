@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/04 22:45:48 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/12 20:08:30 by toliver          ###   ########.fr       */
+/*   Updated: 2018/10/02 22:01:18 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,14 @@ int				echostr(char *str, t_envs *env)
 		printvarvalue("HOME", env->envp);
 		i++;
 	}
-	while (str[i])
+	while (str && str[i])
 	{
 		if (str[i] == '$' && ((i > 0 && str[i] - 1 != '\\') || i == 0))
 		{
 			echowithvariable(str + i, env);
 			break ;
 		}
-		if (str[i] == '\\')
+		if (str[i] == '\\' && str[i + 1])
 			i++;
 		ft_putchar(str[i]);
 		i++;
@@ -80,7 +80,7 @@ int				echo(char **instructions, t_envs *env)
 	i = 1;
 	isfirst = 1;
 	noption = 0;
-	if (instructions && instructions[i][0] == '-')
+	if (instructions && instructions[i] && instructions[i][0] == '-')
 	{
 		if (instructions[i][1] == 'n')
 			noption = 1;

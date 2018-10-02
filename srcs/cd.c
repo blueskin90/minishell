@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/05 01:58:44 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/28 17:52:46 by toliver          ###   ########.fr       */
+/*   Updated: 2018/10/02 22:13:41 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ int				cdminus(t_envs *env)
 		{
 			if (swapoldpwd(env) == -1)
 				returnval(-1, env);
+			ft_putendl(getvarvalue("PWD", env->envp));
 		}
 		else
 			ft_printf("OLDPWD is not a valid path\n");

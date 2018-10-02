@@ -6,13 +6,13 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/12 01:24:53 by toliver           #+#    #+#              #
-#    Updated: 2018/09/28 17:53:42 by toliver          ###   ########.fr        #
+#    Updated: 2018/10/02 21:50:52 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 
-CFLAGS = -Werror -Wextra -Wall #-g3 -fsanitize=address,undefined
+CFLAGS = -Werror -Wextra -Wall -g3 -fsanitize=address,undefined
 
 FILES = minishell \
 		init \
