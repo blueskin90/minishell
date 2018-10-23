@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/28 17:52:14 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/28 17:53:27 by toliver          ###   ########.fr       */
+/*   Updated: 2018/10/23 21:43:29 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,25 @@ int				swapoldpwd(t_envs *env)
 	char		*oldpwd;
 	char		*pwd;
 
-	if (!(oldpwd = ft_strdup(getvarvalue("OLDPWD", env->envp))))
+	if (!pwdexist(env->envp))
+	{
+		if (!envvarexist("OLDPWD", env->envp))
+			return (1);
+		else
+		{
+			if (!(oldpwd = ft_strdup(getvarvalue("OLDPWD", env->envp))))
+				returnval(-1, env);
+			addenvvar("PWD", oldpwd, env);
+			free(oldpwd);
+			return (1);
+		}
+	}
+	if (!envvarexist("OLDPWD", env->envp))
+	{
+		if (!(oldpwd = ft_strdup(getvarvalue("PWD", env->envp))))
+			returnval(-1, env);
+	}
+	else if (!(oldpwd = ft_strdup(getvarvalue("OLDPWD", env->envp))))
 		returnval(-1, env);
 	if (!(pwd = ft_strdup(getvarvalue("PWD", env->envp))))
 		returnval(-1, env);

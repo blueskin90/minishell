@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:22:43 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/05 16:41:04 by toliver          ###   ########.fr       */
+/*   Updated: 2018/10/23 21:20:25 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,24 @@ int				copyenv(char **envp, t_envs *env)
 		i++;
 	}
 	incrementshlevel(env);
+	addenvvar("_", "/usr/bin/env", env);
+	return (1);
+}
+
+int				init_empty_env(t_envs *env)
+{
+	char		*path;
+
+	path = getcwd(NULL, 0);
+	if (path == NULL)
+	{
+		env->running = -2;
+		return (1);
+	}
+	addenvvar("PWD", path, env);
+	free(path);
+	addenvvar("SHLVL", "1", env);
+	addenvvar("_", "/usr/bin/env", env);
 	return (1);
 }
 
@@ -98,13 +116,10 @@ int				init(int argc, char **argv, char **envp, t_envs *env)
 	int			retval;
 
 	setoptions(argc, argv, env);
-	if ((retval = copyenv(envp, env)) == 0)
-	{
+	if ((!envp || envp[0] == NULL) && init_empty_env(env) == 0)
 		env->running = -1;
-		return (1);
-	}
-	if (!envp || envp[0] == NULL)
-		env->running = -2;
+	else if (envp && envp[0] && (retval = copyenv(envp, env)) == 0)
+		env->running = -1;
 	else
 		env->running = 1;
 	return (1);

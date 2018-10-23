@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/05 01:58:44 by toliver           #+#    #+#             */
-/*   Updated: 2018/10/02 22:13:41 by toliver          ###   ########.fr       */
+/*   Updated: 2018/10/23 21:45:20 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int				cdwithpoint(char *path, t_envs *env, char *actualpath)
 		ft_strcat(newpath, "/");
 		ft_strcat(newpath, path);
 	}
-	return (cdend(actualpath, newpath, env));
+	return (cdend(actualpath, newpath, env)); // peut etre free actualpath
 }
 
 int				cdrelative(char *path, t_envs *env)
@@ -46,26 +46,30 @@ int				cdrelative(char *path, t_envs *env)
 	int			mallocsize;
 	char		*actualpath;
 
-	if (pwdexist(env->envp))
+	if (!pwdexist(env->envp))
+	{
+		actualpath = getcwd(NULL, 0);
+		if (!actualpath)
+			returnval(-1, env);
+	}
+	else 
 	{
 		if (!(actualpath = ft_strdup(getvarvalue("PWD", env->envp))))
 			returnval(-1, env);
-		if (path[ft_strlen(path) - 1] == '/')
-			path[ft_strlen(path) - 1] = '\0';
-		if (path[0] == '.' && path[1] == '.'
-				&& (path[2] == '/' || path[2] == '\0'))
-			return (cdwithpoint(path, env, actualpath));
-		mallocsize = ft_strlen(actualpath) + ft_strlen(path) + 2;
-		if (!(realpath = (char*)malloc(sizeof(char) * mallocsize)))
-			returnval(-1, env);
-		ft_strcpy(realpath, actualpath);
-		ft_strcat(realpath, "/");
-		ft_strcat(realpath, path);
-		if (cdend(actualpath, realpath, env) == -1)
-			returnval(-1, env);
 	}
-	else
-		ft_printf("cd with a relative path doesn't work if PWD is not set\n");
+	if (path[ft_strlen(path) - 1] == '/')
+		path[ft_strlen(path) - 1] = '\0';
+	if (path[0] == '.' && path[1] == '.'
+			&& (path[2] == '/' || path[2] == '\0'))
+		return (cdwithpoint(path, env, actualpath));
+	mallocsize = ft_strlen(actualpath) + ft_strlen(path) + 2;
+	if (!(realpath = (char*)malloc(sizeof(char) * mallocsize)))
+		returnval(-1, env);
+	ft_strcpy(realpath, actualpath);
+	ft_strcat(realpath, "/");
+	ft_strcat(realpath, path);
+	if (cdend(actualpath, realpath, env) == -1)
+		returnval(-1, env);
 	return (1);
 }
 
