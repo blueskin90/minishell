@@ -6,12 +6,14 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/28 17:52:14 by toliver           #+#    #+#             */
-/*   Updated: 2018/10/23 21:43:29 by toliver          ###   ########.fr       */
+/*   Updated: 2018/10/24 10:20:58 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+
+/*
 int				swapoldpwd(t_envs *env)
 {
 	char		*oldpwd;
@@ -41,6 +43,30 @@ int				swapoldpwd(t_envs *env)
 		returnval(-1, env);
 	addenvvar("OLDPWD", pwd, env);
 	addenvvar("PWD", oldpwd, env);
+	free(oldpwd);
+	free(pwd);
+	return (1);
+}
+*/
+int				swapoldpwd(t_envs *env)
+{
+	char		*oldpwd;
+	char		*pwd;
+
+	oldpwd = NULL;
+	pwd = NULL;
+	if (!pwdexist(env->envp))
+	{
+		if (!(oldpwd = getcwd(NULL, 0)))
+			returnval(-1, env);
+	}
+	else
+		oldpwd = ft_strdup(getvarvalue("PWD", env->envp));
+	if (envvarexist("OLDPWD", env->envp))
+		if (!(pwd = ft_strdup(getvarvalue("OLDPWD", env->envp))))
+			returnval(-1, env);
+	addenvvar("OLDPWD", oldpwd, env);
+	addenvvar("PWD", pwd, env);
 	free(oldpwd);
 	free(pwd);
 	return (1);
