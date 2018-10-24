@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 01:19:14 by toliver           #+#    #+#             */
-/*   Updated: 2018/10/24 13:48:36 by toliver          ###   ########.fr       */
+/*   Updated: 2018/10/24 16:36:10 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int				exitshell(t_envs *env);
 
 int				loop(t_envs *env);
 int				splitline(char *line, t_list *ptr);
-int				splitinstructions(char *line, char ***instructions, t_envs *env);
+int				splitinstructions(char *line, char ***instruction, t_envs *env);
 int				wordcopy(char *line, char **dst);
 int				wordsize(char *line);
 int				get_nextword(char *line);
@@ -126,7 +126,7 @@ int				echostr(char *str, t_envs *env);
 */
 
 int				pwdshell(char **splittedline, t_envs *env);
-int				setoptions(int argc, char **argv, t_envs *env); // set les options au lancement s'il y a lieu
+int				setoptions(int argc, char **argv, t_envs *env);
 int				cdshell(char **splittedline, t_envs *env);
 int				execprogram(char **splittedline, t_envs *env);
 int				cdend(char *pathtofree, char *realpath, t_envs *env);
@@ -137,6 +137,5 @@ int				isabsolute(char *str);
 int				cdabsolute(char *path, t_envs *env);
 int				exec(char *path, char **argv, t_envs *env);
 int				freeenv(char **env);
-
 
 #endif
