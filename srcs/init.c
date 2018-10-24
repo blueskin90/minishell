@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:22:43 by toliver           #+#    #+#             */
-/*   Updated: 2018/10/23 21:20:25 by toliver          ###   ########.fr       */
+/*   Updated: 2018/10/24 13:47:09 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,23 +90,6 @@ int				copyenv(char **envp, t_envs *env)
 		i++;
 	}
 	incrementshlevel(env);
-	addenvvar("_", "/usr/bin/env", env);
-	return (1);
-}
-
-int				init_empty_env(t_envs *env)
-{
-	char		*path;
-
-	path = getcwd(NULL, 0);
-	if (path == NULL)
-	{
-		env->running = -2;
-		return (1);
-	}
-	addenvvar("PWD", path, env);
-	free(path);
-	addenvvar("SHLVL", "1", env);
 	addenvvar("_", "/usr/bin/env", env);
 	return (1);
 }

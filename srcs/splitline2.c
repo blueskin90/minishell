@@ -6,11 +6,25 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/28 17:50:52 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/28 17:51:03 by toliver          ###   ########.fr       */
+/*   Updated: 2018/10/24 13:46:26 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int				expandhome(char **line, char *homepath, t_envs *env)
+{
+	char		*expandedpath;
+
+	if (!(expandedpath = (char*)malloc(sizeof(char) *
+					(ft_strlen(*line) + ft_strlen(homepath)))))
+		returnval(-1, env);
+	ft_strcpy(expandedpath, homepath);
+	ft_strcat(expandedpath, *line + 1);
+	free(*line);
+	*line = expandedpath;
+	return (1);
+}
 
 int				get_wordnumber(char *line)
 {

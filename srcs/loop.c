@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/01 02:23:08 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/12 20:06:51 by toliver          ###   ########.fr       */
+/*   Updated: 2018/10/24 12:49:46 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int				execline(t_envs *env, char *line)
 {
 	char		**splittedline;
 
-	if (splitinstructions(line, &splittedline) == -1)
+	if (splitinstructions(line, &splittedline, env) == -1)
 		env->running = -1;
 	if (!splittedline || !splittedline[0])
 		return (1);

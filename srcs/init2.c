@@ -1,31 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cd3.c                                              :+:      :+:    :+:   */
+/*   init2.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/09/28 17:52:54 by toliver           #+#    #+#             */
-/*   Updated: 2018/10/24 13:35:12 by toliver          ###   ########.fr       */
+/*   Created: 2018/10/24 13:46:50 by toliver           #+#    #+#             */
+/*   Updated: 2018/10/24 13:47:09 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int				isabsolute(char *str)
+int				init_empty_env(t_envs *env)
 {
-	if (str[0] == '/')
-		return (1);
-	return (0);
-}
+	char		*path;
 
-int				isvalidpath(char *path)
-{
-	if (access(path, F_OK) == -1)
-		ft_printf("minishell: no such file or directory: %s\n", path);
-	else if (access(path, X_OK) == -1)
-		ft_printf("cd: permission denied: %s\n", path);
-	else
+	path = getcwd(NULL, 0);
+	if (path == NULL)
+	{
+		env->running = -2;
 		return (1);
-	return (0);
+	}
+	addenvvar("PWD", path, env);
+	free(path);
+	addenvvar("SHLVL", "1", env);
+	addenvvar("_", "/usr/bin/env", env);
+	return (1);
 }

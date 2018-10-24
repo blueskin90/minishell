@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/04 21:23:31 by toliver           #+#    #+#             */
-/*   Updated: 2018/09/28 17:51:04 by toliver          ###   ########.fr       */
+/*   Updated: 2018/10/24 13:46:27 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int				wordcopy(char *line, char **dst)
 	return (1);
 }
 
-int				splitinstructions(char *line, char ***instructions)
+int				splitinstructions(char *line, char ***instructions, t_envs *env)
 {
 	char		**split;
 	int			wrdnumber;
@@ -106,12 +106,12 @@ int				splitinstructions(char *line, char ***instructions)
 		i = 0;
 		while (*line)
 		{
-			if (!(split[i] =
-						(char*)malloc(sizeof(char) * (wordsize(line) + 1))))
-				return (-1);
-			if (wordcopy(line, &split[i]) == -1)
+			if (!(split[i] = (char*)malloc(wordsize(line) + 1))
+					|| wordcopy(line, &split[i]) == -1)
 				return (-1);
 			line += get_nextword(line);
+			if (split[i][0] == '~' && envvarexist("HOME", env->envp))
+				expandhome(&split[i], getvarvalue("HOME", env->envp), env);
 			i++;
 		}
 	}
