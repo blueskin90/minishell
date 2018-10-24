@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 12:09:17 by toliver           #+#    #+#             */
-/*   Updated: 2017/12/05 18:15:18 by toliver          ###   ########.fr       */
+/*   Updated: 2018/10/24 16:37:24 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <sys/types.h>
 
 # define BUFF_SIZE 512
+
 typedef struct		s_list
 {
 	void			*content;
