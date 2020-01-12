@@ -6,7 +6,7 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/09/20 19:50:33 by toliver           #+#    #+#              #
-#    Updated: 2020/01/12 03:47:36 by toliver          ###   ########.fr        #
+#    Updated: 2020/01/12 07:08:37 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,7 @@ OBJS = $(addprefix objs/, $(addsuffix .o, \
 				main \
 				env \
 				env_init \
+				env_free \
 				utils \
 				) \
 		)) 
@@ -34,9 +35,6 @@ OBJS = $(addprefix objs/, $(addsuffix .o, \
 HEADERS = ./includes/minishell.h
 
 all: $(NAME)
-
-test: test.c
-	gcc -Wall -Werror -Wextra -I./includes test.c -o test
 
 $(NAME): $(LIBS) objs $(OBJS) $(HEADERS)
 	@printf "\033[92m\033[1:32mCompiling -------------> \033[91m$(NAME)\033[0m:\033[0m%-16s\033[32m[✔]\033[0m\n"

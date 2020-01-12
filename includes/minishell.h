@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 01:07:10 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/12 04:16:37 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/12 07:08:39 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ typedef struct			t_env
 {
 	char				*prog_name;
 	t_envp				envp;
+	char				**command;
 }						t_env;
 
 /*
@@ -74,7 +75,8 @@ typedef struct			t_env
 */
 
 int					ft_env_init(t_env *env, char **av, char **envp);
-void					ft_free_env(t_env *env);
+void				ft_free_env(t_env *env);
+void				ft_free_command(t_env *env);
 
 /*
 ** ENV HANDLING FUNCTIONS

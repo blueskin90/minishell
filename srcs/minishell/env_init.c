@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 01:48:16 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/12 04:32:01 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/12 06:53:57 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,27 +31,6 @@ int				ft_envp_realloc(t_env *env, int size)
 	env->envp.env = tmp;
 	return (1);
 }
-
-void			ft_free_envp(t_env *env)
-{
-	int			i;
-	
-	i = 0;
-	while (i < env->envp.occupied && env->envp.env && env->envp.env[i])
-	{
-		free(env->envp.env[i]);
-		i++;
-	}
-	free(env->envp.env);
-}
-
-void			ft_free_env(t_env *env)
-{
-	ft_free_envp(env);
-}
-
-
-// faire une fonction ou on passe 2 morceaux de phrase et elle ressort une phrase separee par un =
 
 int				ft_envp_shlevel(t_env *env)
 {
