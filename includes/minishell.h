@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 01:07:10 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/12 07:08:39 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/12 19:09:20 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <signal.h>
-
+# include <limits.h>
 
 /*
 ** FONCTIONS AUTORISEES
@@ -44,16 +44,15 @@ enum					e_error_origin
 	ENV,
 	SETENV,
 	UNSETENV,
-};
-
-enum					e_error_type
-{
-	MISSING_VARIABLE,
+	EXPAND,
 };
 
 enum					e_warning_type
 {
+	MISSING_VARIABLE,
 	MISSING_EQUAL,
+	MISSING_HOME,
+	MISSING_CWD,
 };
 
 typedef struct			s_envp
@@ -67,6 +66,7 @@ typedef struct			t_env
 {
 	char				*prog_name;
 	t_envp				envp;
+	char				**commands;
 	char				**command;
 }						t_env;
 
@@ -76,12 +76,13 @@ typedef struct			t_env
 
 int					ft_env_init(t_env *env, char **av, char **envp);
 void				ft_free_env(t_env *env);
-void				ft_free_command(t_env *env);
+void				ft_free_command(char **command);
 
 /*
 ** ENV HANDLING FUNCTIONS
 */
 
+int					ft_envp_set_(t_env *env);
 int					ft_envp_realloc(t_env *env, int size);
 int					ft_env(t_env *env);
 int					ft_setenv(t_env *env, char *value);
@@ -94,9 +95,11 @@ int					ft_env_get_index(t_env *env, char *value);
 ** UTILS
 */
 
+int					ft_is_charset(char c, char *charset);
 int					ft_error(int irogin, int value, char *param, t_env *env);
 int					ft_crash(int value, char *param, t_env *env);
 int					ft_warning(int origin, int value, char *param, t_env *env);
 int					ft_usage(void);
+char				**ft_split_charset(char *str, char *charset);
 
 #endif

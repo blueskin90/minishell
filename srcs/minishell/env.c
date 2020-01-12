@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 01:50:21 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/12 07:08:37 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/12 19:10:39 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ char*			ft_env_get_value(t_env *env, char *value)
 	i = 0;
 	while (i < env->envp.occupied)
 	{
-		if (ft_strnequ(env->envp.env[i], value, valuelen))
+		if (ft_strnequ(env->envp.env[i], value, valuelen) && env->envp.env[i][valuelen] == '=')
 			return (&env->envp.env[i][0] + valuelen + 1);
 		i++;
 	}
@@ -91,7 +91,7 @@ int				ft_env_get_index(t_env *env, char *value)
 	i = 0;
 	while (i < env->envp.occupied)
 	{
-		if (ft_strnequ(env->envp.env[i], value, valuelen))
+		if (ft_strnequ(env->envp.env[i], value, valuelen) && env->envp.env[i][valuelen] == '=')
 			return (i);
 		i++;
 	}
