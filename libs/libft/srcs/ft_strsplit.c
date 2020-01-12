@@ -54,6 +54,20 @@ static char			*wordcut(const char *s, char c)
 	return (str);
 }
 
+static int			ft_strsplit_free(char **arr, int wrd)
+{
+	int				i;
+
+	i = 0;
+	while (i < wrd)
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
+	return (1);
+}
+
 char				**ft_strsplit(char const *s, char c)
 {
 	char			**array;
@@ -69,7 +83,10 @@ char				**ft_strsplit(char const *s, char c)
 		if (*s != c && *s != '\0')
 		{
 			if ((array[wrd] = wordcut(s, c)) == NULL)
+			{
+				ft_strsplit_free(array, wrd);
 				return (NULL);
+			}
 			wrd++;
 		}
 		while (*s != c && *s != '\0')

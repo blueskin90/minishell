@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 11:40:58 by toliver           #+#    #+#             */
-/*   Updated: 2017/11/07 21:56:13 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/12 03:54:50 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 char	*ft_strchr(const char *s, int c)
 {
+	if (s == NULL)
+		return (NULL);
 	while (*s && *s != (unsigned char)c)
 		s++;
 	if (*s == (unsigned char)c)

@@ -18,7 +18,7 @@ void		*ft_memalloc(size_t size)
 	size_t	i;
 
 	i = -1;
-	if (!(ptr = (void*)malloc(sizeof(void) * size)) || size == 0)
+	if (size == 0 || !(ptr = (void*)malloc(sizeof(void) * size)))
 		return (NULL);
 	while (++i < size)
 		((char*)ptr)[i] = 0;

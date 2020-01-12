@@ -17,8 +17,7 @@ void				*ft_memchr(const void *b, int c, size_t len)
 	size_t	i;
 
 	i = 0;
-	while (i < len && *(unsigned char*)(b + i)
-			!= (unsigned char)c)
+	while (i < len && *((unsigned char*)(b + i)) != (unsigned char)c)
 		i++;
 	if (i < len && *(unsigned char*)(b + i) == (unsigned char)c)
 		return ((unsigned char*)(b + i));
