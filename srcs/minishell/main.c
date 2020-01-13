@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/07 00:29:48 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/13 09:05:04 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/13 09:15:01 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,32 +176,6 @@ char			*ft_expand_tilde(t_env *env, char *str)
 	expanded[i] = '\0';
 	return (expanded);
 }
-/*
-char			**ft_split_variables_free(char **array)
-{
-	int			i;
-
-	i = 0;
-	while (array && array[i])
-	{
-		free(array[i]);
-		i++;
-	}
-	free(array);
-	return (NULL);
-}
-
-char			**ft_split_variables(char *str, char *charset)
-{
-	char		**array;
-
-	if (!(array = ft_split_variables_allocarray(str)))
-		return (NULL);
-	if (!ft_split_variables_allocstr(str, array))
-		return (ft_split_variables_free(array));
-	return (array);
-}
-*/
 
 char			**ft_split_variables_free(char **tab)
 {
@@ -301,6 +275,7 @@ int				ft_expand_replace_variable(t_env *env, char **tab)
 				if (!(value = ft_strdup(value)))
 					return (0);
 			}
+			free(tab[i]);
 			tab[i] = value;
 		}
 		i++;
@@ -322,7 +297,10 @@ char			*ft_expand_fuse(char **splitted)
 		i++;
 	}
 	if (!(str = (char*)malloc(sizeof(char) * (size + 1))))
+	{
+		ft_split_variables_free(splitted);
 		return (NULL);
+	}
 	ft_bzero(str, size + 1);
 	i = 0;
 	while (splitted && splitted[i])
@@ -330,6 +308,7 @@ char			*ft_expand_fuse(char **splitted)
 		ft_strcat(str, splitted[i]);
 		i++;
 	}
+	ft_split_variables_free(splitted);
 	return (str);
 }
 
