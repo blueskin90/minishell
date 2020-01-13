@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/07 00:29:48 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/12 19:10:39 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/13 09:05:04 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,13 +202,138 @@ char			**ft_split_variables(char *str, char *charset)
 	return (array);
 }
 */
-char			**ft_split_variables(char *str)
+
+char			**ft_split_variables_free(char **tab)
 {
-	(void)str;
-	return (NULL);	
+	int			i;
+
+	i = 0;
+	while (tab && tab[i])
+	{
+		free(tab[i]);
+		i++;
+	}
+	free(tab);
+	return (NULL);
 }
 
-char			**ft_expand_variable(t_env *env, char *str)
+char			**ft_split_variables_alloc(char *str, int count)
+{
+	char		**tab;
+	int			num;
+	int			i;
+
+	i = 0;
+	if (!(tab = (char**)malloc(sizeof(char*) * (count + 1))))
+		return (NULL);
+	ft_bzero(tab, sizeof(char*) * (count + 1));
+	num = 0;
+	while (str && str[i])
+	{
+		while (str[i] && str[i] != '$')
+			i++;
+		if (i != 0)
+		{
+			if (!(tab[num] = (char*)malloc(sizeof(char) * (i + 1))))
+				return (ft_split_variables_free(tab));
+			ft_strncpy(tab[num], str, i);
+			tab[num][i] = '\0';
+			num++;
+			str += i;
+			i = 0;
+		}
+		if (str[i] == '$')
+		{
+			i++;
+			while (str[i] && !ft_is_charset(str[i], "\t\n\r\v\f $"))
+				i++;
+			if (!(tab[num] = (char*)malloc(sizeof(char) * (i + 1))))
+				return (ft_split_variables_free(tab));
+			ft_strncpy(tab[num], str, i);
+			tab[num][i] = '\0';
+			num++;
+			str += i;
+			i = 0;
+		}
+	}
+	return (tab);
+}
+
+char			**ft_split_variables(char *str)
+{
+	int			i;
+	int			count;
+
+	i = 0;
+	count = 1;
+	while (str && str[i])
+	{
+		if (str[i] == '$')
+		{
+			count++;
+			i++;
+			while (str[i] && !ft_is_charset(str[i], "\t\n\r\v\f $"))
+				i++;
+			if (str[i])
+				count++;
+		}
+		else
+			i++;
+	}
+	return (ft_split_variables_alloc(str, count));
+}
+
+int				ft_expand_replace_variable(t_env *env, char **tab)
+{
+	int			i;
+	char		*value;
+
+	i = 0;
+	while (tab && tab[i])
+	{
+		if (tab[i][0] == '$')
+		{
+			value = ft_env_get_value(env, tab[i] + 1);
+			if (value == NULL && !(value = ft_strdup("")))
+				return (0);
+			else
+			{
+				if (!(value = ft_strdup(value)))
+					return (0);
+			}
+			tab[i] = value;
+		}
+		i++;
+	}
+	return (1);
+}
+
+char			*ft_expand_fuse(char **splitted)
+{
+	int			i;
+	int			size;
+	char		*str;
+
+	size = 0;
+	i = 0;
+	while (splitted && splitted[i])
+	{
+		size += ft_strlen(splitted[i]);
+		i++;
+	}
+	if (!(str = (char*)malloc(sizeof(char) * (size + 1))))
+		return (NULL);
+	ft_bzero(str, size + 1);
+	i = 0;
+	while (splitted && splitted[i])
+	{
+		ft_strcat(str, splitted[i]);
+		i++;
+	}
+	return (str);
+}
+
+char			*ft_expand_variable(t_env *env, char *str)
 {
 	char		**splitted;
 
@@ -217,33 +342,28 @@ char			**ft_expand_variable(t_env *env, char *str)
 		ft_crash(MALLOC_FAIL, NULL, env);
 		return (NULL);
 	}
-	int			i;
-
-	i = 0;
-	while (splitted && splitted[i])
+	if (!(ft_expand_replace_variable(env, splitted)))
 	{
-		ft_printf("%s\n", splitted[i]);
-		i++;
+		ft_split_variables_free(splitted);
+		ft_crash(MALLOC_FAIL, NULL, env);
+		return (NULL);
 	}
-	ft_printf("go expand les variables dans la string omg !\n");
-	return (NULL);
+	return (ft_expand_fuse(splitted));
 }
 
 char			*ft_expand_str(t_env *env, char *str)
 {
-//	char		*expanded;
+	char		*expanded;
 
 	if (!(str = ft_expand_tilde(env, str)))
 		return (NULL);
-	return (str);
-/*	if (!(expanded = ft_expand_variable(env, str)))
+	if (!(expanded = ft_expand_variable(env, str)))
 	{
 		free(str);
 		return (NULL);
 	}
 	free(str);
 	return (expanded);
-	*/
 }
 
 int				ft_split_commands(t_env *env, char *str)
@@ -299,6 +419,8 @@ void			ft_run(t_env *env)
 			break;
 		if (!(ft_exec_commands(env)))
 			break;
+		if (retval == 0)
+			ft_printf("\n");
 		ft_printf("$>");
 	}
 	if (retval == -1)
