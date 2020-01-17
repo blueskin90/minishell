@@ -6,7 +6,7 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/09/20 19:50:33 by toliver           #+#    #+#              #
-#    Updated: 2020/01/17 07:23:01 by toliver          ###   ########.fr        #
+#    Updated: 2020/01/17 10:35:56 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,9 +26,22 @@ OBJS = $(addprefix objs/, $(addsuffix .o, \
 			$(addprefix minishell/, \
 				main \
 				env \
+				env1 \
+				env2 \
 				env_init \
+				env_init1 \
+				env_init2 \
 				env_free \
 				utils \
+				utils1 \
+				utils2 \
+				builtins \
+				builtins1 \
+				builtins2 \
+				builtins3 \
+				builtins4 \
+				builtins5 \
+				builtins6 \
 				) \
 		)) 
 

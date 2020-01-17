@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 06:49:13 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/17 05:49:07 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/17 07:49:39 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void			ft_free_command(char **command)
 {
 	int			i;
-	
+
 	i = 0;
 	while (command && command[i])
 	{
@@ -29,7 +29,7 @@ void			ft_free_command(char **command)
 void			ft_free_envp(t_env *env)
 {
 	int			i;
-	
+
 	i = 0;
 	while (i < env->envp.occupied && env->envp.env && env->envp.env[i])
 	{
