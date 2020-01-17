@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 08:29:39 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/17 08:32:55 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/17 13:19:14 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ char			**ft_env_add_param(char **env, char *param)
 	ft_bzero(tmp, sizeof(char*) * (ft_env_getsize(env) + 2));
 	while (env && env[i])
 	{
-		tmp[i] = env[i];
+		tmp[i] = ft_strdup(env[i]);
 		i++;
 	}
 	if (!(tmp[i] = ft_strdup(param)))
