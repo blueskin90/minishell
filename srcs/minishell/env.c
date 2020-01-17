@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 01:50:21 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/13 09:05:02 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/17 07:46:45 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,15 +98,113 @@ int				ft_env_get_index(t_env *env, char *value)
 	return (-1);
 }
 
-int				ft_env(t_env *env)
+void			ft_dump_env(char **env)
 {
 	int			i;
 
 	i = 0;
-	while (i < env->envp.occupied) // attention size = total
+	while (env && env[i])
 	{
-		ft_printf("%s\n", env->envp.env[i]);
+		ft_printf("%s\n", env[i]);
 		i++;
 	}
+}
+
+int				ft_env_getsize(char **env)
+{
+	int			i;
+
+	i = 0;
+	while (env && env[i])
+		i++;
+	return (i);
+}
+
+char			**ft_env_add_param(char **env, char *param)
+{
+	char		**tmp;
+	int			i;
+
+	if (!(tmp = (char**)malloc(sizeof(char*) * (ft_env_getsize(env) + 2))))
+		return (NULL);
+	i = 0;
+	ft_bzero(tmp, sizeof(char*) * (ft_env_getsize(env) + 2));
+	while (env && env[i])
+	{
+		tmp[i] = env[i];
+		i++;
+	}
+	if (!(tmp[i] = ft_strdup(param)))
+	{
+		ft_env_cpy_free(tmp);
+		return (NULL);
+	}
+	return (tmp);
+}
+
+int				ft_env_add_params(char ***envp, t_env *env, int *i)
+{
+	char		**tmp;
+
+	while (ft_strchr(env->command[*i], '=') != NULL)
+	{
+		if (!(tmp = ft_env_add_param(*envp, env->command[*i])))
+		{
+			ft_env_cpy_free(*envp);
+			*envp = NULL;
+			return (0);
+		}
+		free(*envp);
+		*envp = tmp;
+		(*i)++;
+	}
+	return (1);
+}
+
+int				ft_exec_env(t_env *env, char **envp, char **commands)
+{
+	t_env		envcpy;
+
+	ft_memcpy(&envcpy, env, sizeof(t_env));
+	envcpy.command = commands;
+	envcpy.envp.env = envp;
+	envcpy.envp.occupied = ft_env_getsize(envp);
+	envcpy.envp.size = ft_env_getsize(envp) + 1;
+	return (ft_exec_command(&envcpy));
+}
+
+int				ft_env(t_env *env)
+{
+	char		**tmp_env;
+	int			i;
+
+	tmp_env = NULL;
+	i = 1;
+	if (!env->command[1] || !ft_strequ(env->command[1], "-i"))
+	{
+		if (!(tmp_env = ft_env_cpy(env)))
+			return (ft_crash(MALLOC_FAIL, NULL, env));
+	}
+	if (ft_strequ(env->command[1], "-i"))
+	{
+		i++;
+		if (!(tmp_env = (char**)malloc(sizeof(char*))))
+			return (ft_crash(MALLOC_FAIL, NULL, env));
+		ft_bzero(tmp_env, sizeof(char*));
+	}
+	if (!(ft_env_add_params(&tmp_env, env, &i)))
+	{
+		ft_env_cpy_free(tmp_env);
+		return (ft_crash(MALLOC_FAIL, NULL, env));
+	}
+	if (env->command[i] == NULL)
+		ft_dump_env(tmp_env);
+	else
+	{
+		i = ft_exec_env(env, tmp_env, &env->command[i]);
+		ft_env_cpy_free(tmp_env);
+		return (i);
+	}
+	ft_env_cpy_free(tmp_env);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/07 00:29:48 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/13 09:15:01 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/17 07:46:47 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,31 +70,275 @@ int				ft_unsetenv_internal(t_env *env)
 	return (1);
 }
 
-void			ft_dump_command(t_env *env)
+void			ft_env_cpy_free(char **tofree)
 {
 	int			i;
 
 	i = 0;
-	while (env->command && env->command[i])
+	while (tofree && tofree[i])
 	{
-		ft_printf(">%s<\n", env->command[i]);
+		free(tofree[i]);
 		i++;
 	}
+	free(tofree);
+}
+
+char			**ft_env_cpy(t_env *env)
+{
+	char		**envcpy;
+	int			i;
+
+	if (!(envcpy = (char**)malloc(sizeof(char*) * (env->envp.occupied + 1))))
+		return (NULL);
+	ft_bzero(envcpy, sizeof(char*) * (env->envp.occupied + 1));
+	i = 0;
+	while (i < env->envp.occupied)
+	{
+		if (!(envcpy[i] = ft_strdup(env->envp.env[i])))
+		{
+			ft_env_cpy_free(envcpy);
+			return (NULL);
+		}
+		i++;
+	}
+	return (envcpy);
+}
+
+int				ft_check_path_error(char *path, t_env *env, int error)
+{
+	ft_dprintf(2, "%s: ", env->prog_name);
+	if (error == DOESNT_EXIST)
+		ft_dprintf(2, "no such file or directory: %s\n", path);
+	else if (error == CANT_EXECUTE)
+		ft_dprintf(2, "permission denied: %s\n", path);
+	else if (error == NOT_FOUND)
+		ft_dprintf(2, "command not found: %s\n", path);
+	else
+		ft_dprintf(2, "unknown error: %s\n", path);
+	(void)env;
+	return (1);
+}
+
+int				ft_check_path(char *path, t_env *env)
+{
+	int			ret;
+
+	ret = access(path, F_OK);
+	if (ret == -1)
+	{
+		ft_check_path_error(path, env, DOESNT_EXIST);
+		return (0);
+	}
+	ret = access(path, X_OK);
+	if (ret == -1)
+	{
+		ft_check_path_error(path, env, CANT_EXECUTE);
+		return (0);
+	}
+	return (1);
+}
+
+char			*ft_path_combine(char *pathstart, char *pathend, char *pathlink)
+{
+	int			size;
+	char		*fullpath;
+
+	if (!pathstart || !pathend || !pathlink)
+		return (0);
+	size = ft_strlen(pathstart) + ft_strlen(pathend) + ft_strlen(pathlink);
+	if (!(fullpath = (char*)malloc(sizeof(char) * (size + 1))))
+		return (NULL);
+	ft_bzero(fullpath, sizeof(char) * (size + 1));
+	ft_strcat(fullpath, pathstart);
+	ft_strcat(fullpath, pathlink);
+	ft_strcat(fullpath, pathend);
+	return (fullpath);
+}
+
+int				ft_update_env(t_env *env, char *path, char *value)
+{
+	char		*fullvalue;
+
+	if (!(fullvalue = ft_path_combine(value, path, "=")))
+		return (0);
+	if (!(ft_setenv(env, fullvalue)))
+	{
+		free(fullvalue);
+		return (0);
+	}
+	return (1);
+}
+
+int				ft_update_pwd(t_env *env, char *oldpwd)
+{
+	char		*path;
+
+	path = NULL;
+	if (!(path = getcwd(NULL, 0)))
+		return (0);
+	if (oldpwd == NULL)
+		oldpwd = "";
+	if (ft_env_get_value(env, "PWD"))
+	{
+		if (!(ft_update_env(env, path, "PWD")))
+			return (ft_crash(MALLOC_FAIL, NULL, env));
+	}
+	free(path);
+	if (!(ft_update_env(env, oldpwd, "OLDPWD")))
+		return (ft_crash(MALLOC_FAIL, NULL, env));
+	return (1);
+}
+
+int				ft_cd(t_env *env, char *path)
+{
+	char		*oldpath;
+
+	if (!ft_check_path(path, env))
+		return (1);
+	oldpath = getcwd(NULL, 0);
+	if (chdir(path) == -1)
+	{
+		ft_printf("%s: couldn't cd to %s\n", env->prog_name, path);
+		free(oldpath);
+		return (1);
+	}
+	if (!(ft_update_pwd(env, oldpath)))
+	{
+		free(oldpath);
+		ft_printf("ici 2 ffs\n");
+		return (ft_crash(MALLOC_FAIL, NULL, env));
+	}
+	free(oldpath);
+	return (1);	
+}
+
+int				ft_cd_minus_internal(t_env *env)
+{
+	char		*prev;
+
+	prev = ft_env_get_value(env, "OLDPWD");
+	if (!prev || !prev[0])
+		return (ft_warning(CD, MISSING_OLDPWD, NULL, env));
+	return (ft_cd(env, prev));
+}
+
+int				ft_cd_home(t_env *env)
+{
+	char		*home;
+
+	if (!(home = ft_env_get_value(env, "HOME")))
+		return (ft_warning(CD, MISSING_HOME, NULL, env));
+	return (ft_cd(env, home));
 }
 
 int				ft_cd_internal(t_env *env)
 {
-	(void)env;
-	ft_printf("cd !\n");
+	if (env->command[1] == NULL)
+		return (ft_cd_home(env));
+	else if (env->command[1] && env->command[1][0] == '-'
+			&& env->command[1][1] == '\0')
+		return (ft_cd_minus_internal(env));
+	else
+		return (ft_cd(env, env->command[1]));
+	return (1);
+}
+
+int				ft_exec_internal(char *path, char **argv, char **env_copy, t_env *env)
+{
+	pid_t		forked;
+	int			test;
+	
+	if (!(ft_check_path(path, env)))
+		return (1);
+	if ((forked = fork()) == -1)
+		return (ft_warning(EXEC, FORK_FAILED, path, env)); // FORK QUI CRASH A GERER
+	if (forked == 0)
+	{
+		execve(path, argv, env_copy);
+		exit(1); // voir si il ne faut pas free
+	}
+	else
+		wait(&test); // gerer le ctrl c qui kill le fils
+	// je gere pas grand chose par ici :/ a revoir quand tout marchera
+	return (1);
+}
+
+int				ft_is_path(char *str)
+{
+	if (str && (str[0] == '/' || str[0] == '.'))
+		return (1);
+	return (0);
+}
+
+void			ft_free_paths(char **paths)
+{
+	int			i;
+
+	i = 0;
+	while (paths && paths[i])
+	{
+		free(paths[i]);
+		i++;
+	}
+	free(paths);
+}
+
+int				ft_exec_findpath(t_env *env)
+{
+	char		*path;
+	char		**paths;
+	char		*execpath;
+	int			i;
+
+	execpath = NULL;
+	path = ft_env_get_value(env, "PATH");
+	if (path == NULL)
+		return (0);
+	if (!(paths = ft_split_charset(path, ":")))
+		return (-1);
+	i = 0;
+	while (paths && paths[i])
+	{
+		if (!(execpath = ft_path_combine(paths[i], env->command[0], "/")))
+		{
+			ft_free_paths(paths);
+			return (-1);
+		}
+		if (access(execpath, F_OK) == 0)
+		{
+			free(env->command[0]);
+			env->command[0] = execpath;
+			break;
+		}
+		free(execpath);
+		i++;
+	}
+	ft_free_paths(paths);
 	return (1);
 }
 
 int				ft_exec(t_env *env)
 {
-	(void)env;
-	ft_printf("exec !\n");
-//	ft_dump_command(env);
-	return (1);
+	char		**envcpy;
+	int			retval;
+
+	if (!(envcpy = ft_env_cpy(env)))
+		return (ft_crash(MALLOC_FAIL, NULL, env));
+	if (ft_is_path(env->command[0]))
+		ft_exec_internal(env->command[0], env->command, envcpy, env);
+	else
+	{
+		retval = ft_exec_findpath(env);
+		if (retval == -1 || retval == 0)
+		{
+			ft_env_cpy_free(envcpy);
+			return (retval == -1 ? ft_crash(MALLOC_FAIL, NULL, env) :
+					ft_check_path_error(env->command[0], env, NOT_FOUND));
+		}
+		ft_exec_internal(env->command[0], env->command, envcpy, env);
+	}
+	ft_env_cpy_free(envcpy);
+	return (1); // verifier que bien tout soit free
 }
 
 int				ft_exec_command(t_env *env)
@@ -119,7 +363,10 @@ int				ft_exec_command(t_env *env)
 	if (ft_strnequ("cd", str, 2) && !str[2])
 		return (ft_cd_internal(env));
 	if (ft_strnequ("exit", str, 4) && !str[4])
+	{
+		ft_printf("exit\n");
 		return (0);
+	}
 	return (ft_exec(env));
 
 	// rajouter dans le _ le dernier param (probablement pas oblige)!
@@ -411,7 +658,10 @@ int				main(int ac, char **av, char **envp)
 	t_env		env;
 
 	if (ac != 1)
+	{
+		ft_printf("%d\n", ac);
 		return (ft_usage());
+	}
 	if (!(ft_env_init(&env, av, envp)))
 		return (-1);
 	ft_run(&env);

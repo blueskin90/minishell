@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 01:54:46 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/12 19:10:38 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/17 07:46:48 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,19 +35,28 @@ char			*ft_error_origin(int origin)
 		return ("unsetenv");
 	else if (origin == EXPAND)
 		return ("expansion");
+	else if (origin == CD)
+		return ("cd");
 	return ("UNKNOWN");
 }
 
 int				ft_warning(int origin, int value, char *param, t_env *env)
 {
 	(void)env;
-	ft_dprintf(2, "%s: ", ft_error_origin(origin));
+	if (origin == EXEC)
+		ft_dprintf(2, "%s: ", param);
+	else
+		ft_dprintf(2, "%s: ", ft_error_origin(origin));
 	if (value == MISSING_EQUAL)
 		ft_dprintf(2, "%s does not contain an =\n", param);
 	else if (value == MISSING_VARIABLE)
 		ft_dprintf(2, "couldn't find variable : %s in env\n", param);
 	else if (value == MISSING_HOME)
-		ft_dprintf(2, "$HOME is not set !\n");
+		ft_dprintf(2, "HOME is not set !\n");
+	else if (value == MISSING_OLDPWD)
+		ft_dprintf(2, "OLDPWD is not set !\n");
+	else if (value == FORK_FAILED)
+		ft_dprintf(2, "Fork didn't work !\n");
 	else
 		ft_dprintf(2, "Unknown warning !\n");
 	return (1);	

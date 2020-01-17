@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 01:07:10 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/12 19:09:20 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/17 07:46:48 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ enum					e_error_origin
 	SETENV,
 	UNSETENV,
 	EXPAND,
+	CD,
+	EXEC,
 };
 
 enum					e_warning_type
@@ -52,7 +54,12 @@ enum					e_warning_type
 	MISSING_VARIABLE,
 	MISSING_EQUAL,
 	MISSING_HOME,
+	MISSING_OLDPWD,
 	MISSING_CWD,
+	FORK_FAILED,
+	DOESNT_EXIST,
+	CANT_EXECUTE,
+	NOT_FOUND,
 };
 
 typedef struct			s_envp
@@ -92,6 +99,12 @@ char*				ft_env_get_value(t_env *env, char *value);
 int					ft_env_get_index(t_env *env, char *value);
 
 /*
+** EXEC FUNCTIONS
+*/
+
+int					ft_exec_command(t_env *env);
+
+/*
 ** UTILS
 */
 
@@ -101,5 +114,6 @@ int					ft_crash(int value, char *param, t_env *env);
 int					ft_warning(int origin, int value, char *param, t_env *env);
 int					ft_usage(void);
 char				**ft_split_charset(char *str, char *charset);
-
+char				**ft_env_cpy(t_env *env);
+void				ft_env_cpy_free(char **tofree);
 #endif
