@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 08:29:39 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/17 13:19:14 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/18 17:51:19 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int				ft_env_add_params(char ***envp, t_env *env, int *i)
 			*envp = NULL;
 			return (0);
 		}
-		free(*envp);
+		ft_env_cpy_free(*envp);
 		*envp = tmp;
 		(*i)++;
 	}

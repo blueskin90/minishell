@@ -6,13 +6,13 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/12 01:24:53 by toliver           #+#    #+#              #
-#    Updated: 2019/08/10 21:32:00 by toliver          ###   ########.fr        #
+#    Updated: 2020/01/20 11:11:01 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
 
-FLAGS = -Wall -Wextra -Werror -Ofast
+FLAGS = -Wall -Wextra -Werror -Ofast -g3
 
 FILES = atoi \
 		atoll \
@@ -98,7 +98,7 @@ objs:
 	mkdir -p objs/
 
 clean:
-	@rm -rf $(OBJS)
+	@rm -rf objs/
 	@printf  "\033[1:32mCleaning object files -> \033[91m$(NAME)\033[0m\033[1:32m:\033[0m%-16s\033[32m[✔]\033[0m\n"
 
 fclean: clean

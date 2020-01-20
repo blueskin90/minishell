@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/07 00:29:48 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/17 11:44:51 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/20 11:52:34 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,18 @@ void			ft_sigtest(int signal)
 	env->pid = 0;
 }
 
+void			ft_run1(t_env *env)
+{
+	ft_printf("$>");
+	ft_set_env(env);
+}
+
 void			ft_run(t_env *env)
 {
 	int			retval;
 	char		*str;
 
-	ft_printf("$>");
-	ft_set_env(env);
+	ft_run1(env);
 	signal(SIGINT, &ft_sigtest);
 	while ((retval = ft_gnl(0, &str)) > 0)
 	{
@@ -47,7 +52,10 @@ void			ft_run(t_env *env)
 		if (!(ft_exec_commands(env)))
 			break ;
 		if (retval == 0)
+		{
+			free(str);
 			ft_printf("\n");
+		}
 		ft_printf("$>");
 	}
 	if (retval == -1)

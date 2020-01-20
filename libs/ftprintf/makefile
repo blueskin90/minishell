@@ -6,13 +6,13 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/12 01:24:53 by toliver           #+#    #+#              #
-#    Updated: 2019/01/07 16:27:39 by toliver          ###   ########.fr        #
+#    Updated: 2020/01/18 18:51:21 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libftprintf.a
 
-FLAGS = -Werror -Wextra -Wall -Ofast
+FLAGS = -Werror -Wextra -Wall -Ofast -g3
 
 FILES = ft_printf \
 		parsing \

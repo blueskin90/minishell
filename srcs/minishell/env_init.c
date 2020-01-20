@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 01:48:16 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/17 08:39:39 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/18 17:22:45 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ int				ft_envp_alloc_and_copy(t_env *env, char **envp)
 
 int				ft_env_init(t_env *env, char **av, char **envp)
 {
+	ft_bzero(env, sizeof(t_env));
 	env->prog_name = av[0];
 	if (!(ft_envp_alloc_and_copy(env, envp)))
 		return (0);

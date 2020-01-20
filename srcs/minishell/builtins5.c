@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 09:41:04 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/17 10:34:52 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/20 11:08:45 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,13 +103,13 @@ int				ft_expand_replace_variable(t_env *env, char **tab)
 		if (tab[i][0] == '$')
 		{
 			value = ft_env_get_value(env, tab[i] + 1);
-			if (value == NULL && !(value = ft_strdup("")))
-				return (0);
-			else
+			if (value == NULL)
 			{
-				if (!(value = ft_strdup(value)))
+				if (!(value = ft_strdup("")))
 					return (0);
 			}
+			else if (!(value = ft_strdup(value)))
+				return (0);
 			free(tab[i]);
 			tab[i] = value;
 		}

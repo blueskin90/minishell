@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 01:50:21 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/17 13:19:12 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/18 19:09:20 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ int				ft_exec_env(t_env *env, char **envp, char **commands)
 	return (ft_exec_command_env(&envcpy));
 }
 
-// crash sur le env -i
 int				ft_env(t_env *env)
 {
 	char		**tmp_env;
