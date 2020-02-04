@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 01:50:21 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/18 19:09:20 by toliver          ###   ########.fr       */
+/*   Updated: 2020/02/04 18:23:51 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,13 @@ int				ft_env(t_env *env)
 		return (ft_crash(MALLOC_FAIL, NULL, env));
 	}
 	if (env->command[i] == NULL)
-		ft_dump_env(tmp_env);
-	else
 	{
-		i = ft_exec_env(env, tmp_env, env->command + i);
-		ft_env_cpy_free(tmp_env);
-		return (i);
+		ft_dump_env(tmp_env);
+		i = 1;
 	}
+	else
+		i = ft_exec_env(env, tmp_env, env->command + i);
 	ft_env_cpy_free(tmp_env);
-	return (1);
+	env->path = ft_env_get_value(env, "PATH");
+	return (i);
 }

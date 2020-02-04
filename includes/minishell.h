@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 01:07:10 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/17 11:51:35 by toliver          ###   ########.fr       */
+/*   Updated: 2020/02/04 18:18:59 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ typedef struct			s_env
 	char				**commands;
 	char				**command;
 	pid_t				pid;
+	char				*path;
 }						t_env;
 
 /*
@@ -163,6 +164,8 @@ int						ft_exec_commands(t_env *env);
 ** UTILS
 */
 
+char					*ft_envp_get_value(char **envp, char *value);
+int						ft_gnl2(int fd, char **line);
 int						ft_is_charset(char c, char *charset);
 int						ft_error(int irogin, int value, char *param,
 		t_env *env);
@@ -173,4 +176,5 @@ int						ft_usage(void);
 char					**ft_split_charset(char *str, char *charset);
 char					**ft_env_cpy(t_env *env);
 void					ft_env_cpy_free(char **tofree);
+char					**ft_split_free(char **array);
 #endif

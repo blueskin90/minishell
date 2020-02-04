@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 09:28:57 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/17 09:30:45 by toliver          ###   ########.fr       */
+/*   Updated: 2020/02/04 17:58:25 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ int				ft_setenv_internal(t_env *env)
 			return (0);
 		i++;
 	}
+	env->path = ft_env_get_value(env, "PATH");
 	return (1);
 }
 
@@ -67,5 +68,6 @@ int				ft_unsetenv_internal(t_env *env)
 		i++;
 		free(command);
 	}
+	env->path = ft_env_get_value(env, "PATH");
 	return (1);
 }

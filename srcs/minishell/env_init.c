@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 01:48:16 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/18 17:22:45 by toliver          ###   ########.fr       */
+/*   Updated: 2020/02/04 18:17:42 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,5 +80,6 @@ int				ft_env_init(t_env *env, char **av, char **envp)
 		return (0);
 	if (!(ft_envp_mandatory(env)))
 		return (0);
+	env->path = ft_env_get_value(env, "PATH");
 	return (1);
 }

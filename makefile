@@ -6,7 +6,7 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/09/20 19:50:33 by toliver           #+#    #+#              #
-#    Updated: 2020/01/18 17:20:35 by toliver          ###   ########.fr        #
+#    Updated: 2020/01/31 15:39:49 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,6 +42,8 @@ OBJS = $(addprefix objs/, $(addsuffix .o, \
 				builtins4 \
 				builtins5 \
 				builtins6 \
+				builtins7 \
+				gnl2 \
 				) \
 		)) 
 

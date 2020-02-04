@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 09:30:50 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/17 11:38:03 by toliver          ###   ########.fr       */
+/*   Updated: 2020/02/04 18:00:53 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int				ft_exec_findpath(t_env *env)
 	int			i;
 
 	execpath = NULL;
-	path = ft_env_get_value(env, "PATH");
+	path = env->path;
 	if (path == NULL)
 		return (0);
 	if (!(paths = ft_split_charset(path, ":")))

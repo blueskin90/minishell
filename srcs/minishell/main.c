@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/07 00:29:48 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/20 11:52:34 by toliver          ###   ########.fr       */
+/*   Updated: 2020/02/04 17:52:15 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void			ft_run(t_env *env)
 
 	ft_run1(env);
 	signal(SIGINT, &ft_sigtest);
-	while ((retval = ft_gnl(0, &str)) > 0)
+	while ((retval = ft_gnl2(0, &str)) > 0)
 	{
 		if (str == NULL && !(str = ft_strdup("")))
 		{

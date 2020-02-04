@@ -6,52 +6,11 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 09:38:46 by toliver           #+#    #+#             */
-/*   Updated: 2020/01/20 11:03:54 by toliver          ###   ########.fr       */
+/*   Updated: 2020/01/25 17:03:40 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int				ft_cd_internal(t_env *env)
-{
-	if (env->command[1] == NULL)
-		return (ft_cd_home(env));
-	else if (env->command[1] && env->command[1][0] == '-'
-			&& env->command[1][1] == '\0')
-		return (ft_cd_minus_internal(env));
-	else
-		return (ft_cd(env, env->command[1]));
-	return (1);
-}
-
-int				ft_exec_command(t_env *env)
-{
-	char		*str;
-
-	str = env->command[0];
-	if (str == NULL)
-		return (1);
-	if (!str[0])
-		return (1);
-	if (!(ft_envp_set_(env)))
-		return (0);
-	if (ft_strnequ("env", str, 3) && !str[3])
-		return (ft_env_internal(env));
-	if (ft_strnequ("unsetenv", str, 8) && !str[8])
-		return (ft_unsetenv_internal(env));
-	if (ft_strnequ("setenv", str, 6) && !str[6])
-		return (ft_setenv_internal(env));
-	if (ft_strnequ("echo", str, 4) && !str[4])
-		return (ft_echo_internal(env));
-	if (ft_strnequ("cd", str, 2) && !str[2])
-		return (ft_cd_internal(env));
-	if (ft_strnequ("exit", str, 4) && !str[4])
-	{
-		ft_printf("exit\n");
-		return (0);
-	}
-	return (ft_exec(env));
-}
 
 int				ft_split_command(t_env *env, char *str)
 {
@@ -61,51 +20,101 @@ int				ft_split_command(t_env *env, char *str)
 	return (1);
 }
 
-static void		ft_expand_tilde_fuck_the_norm(int *i, char *str,
-		char *expanded, char *home)
+char			*ft_fuse_array(char **arr, char *fuse)
 {
-	*i = 0;
-	while (*str)
+	int			size;
+	int			i;
+	char		*str;
+
+	i = 0;
+	size = 0;
+	while (arr[i])
 	{
-		if (*str == '~')
-		{
-			ft_strcat(expanded, home);
-			*i += ft_strlen(home);
-		}
-		else
-		{
-			expanded[*i] = *str;
-			(*i)++;
-		}
-		str++;
+		size += ft_strlen(arr[i]);
+		if (arr[i + 1])
+			size += 1;
+		i++;
 	}
-	expanded[*i] = '\0';
+	size += 1;
+	if (!(str = (char*)ft_memalloc(sizeof(char) * size)))
+		return (NULL);
+	i = 0;
+	while (arr[i])
+	{
+		ft_strcat(str, arr[i]);
+		if (arr[i + 1])
+			ft_strcat(str, fuse);
+		i++;
+	}
+	return (str);
+}
+
+char			*ft_expand_tilde_command_final(t_env *env, char *str)
+{
+	char		*finalstr;
+	char		*home;
+	int			size;
+
+	if (!(str && str[0] == '~' && (!str[1] || str[1] == '/')))
+		return (ft_strdup(str));
+	if (!(home = ft_env_get_value(env, "HOME")))
+		home = "";
+	size = ft_strlen(str) + ft_strlen(home) + 1;
+	if (!(finalstr = (char*)ft_memalloc(sizeof(char) * size)))
+		return (NULL);
+	ft_strcat(finalstr, home);
+	ft_strcat(finalstr, str + 1);
+	return (finalstr);
+}
+
+char			*ft_expand_tilde_command(t_env *env, char *str)
+{
+	char		**splitted_command;
+	int			i;
+	char		*tmp;
+
+	if (!(splitted_command = ft_split_charset(str, " \t\n\r\v\f")))
+		return (NULL);
+	i = 0;
+	while (splitted_command[i])
+	{
+		tmp = splitted_command[i];
+		if (!(splitted_command[i] = ft_expand_tilde_command_final(env, tmp)))
+		{
+			splitted_command[i] = tmp;
+			ft_split_free(splitted_command);
+			return (NULL);
+		}
+		free(tmp);
+		i++;
+	}
+	tmp = ft_fuse_array(splitted_command, " ");
+	ft_split_free(splitted_command);
+	return (tmp);
 }
 
 char			*ft_expand_tilde(t_env *env, char *str)
 {
-	char		*home;
+	char		**splitted_commands;
 	int			i;
-	int			count;
-	char		*expanded;
+	char		*tmp;
 
-	home = ft_env_get_value(env, "HOME");
+	if (!(splitted_commands = ft_split_charset(str, ";")))
+		return (NULL);
 	i = 0;
-	count = 0;
-	while (str[i])
+	while (splitted_commands[i])
 	{
-		if (str[i] == '~')
-			count++;
+		tmp = splitted_commands[i];
+		if (!(splitted_commands[i] = ft_expand_tilde_command(env, tmp)))
+		{
+			splitted_commands[i] = tmp;
+			ft_split_free(splitted_commands);
+			return (NULL);
+		}
+		free(tmp);
 		i++;
 	}
-	if (count && home == NULL)
-		ft_warning(EXPAND, MISSING_HOME, NULL, env);
-	if (home == NULL)
-		home = "";
-	if (!(expanded = (char*)malloc(sizeof(char) *
-					(count * ft_strlen(home) + i + 1))))
-		return (NULL);
-	ft_bzero(expanded, count * ft_strlen(home) + i + 1);
-	ft_expand_tilde_fuck_the_norm(&i, str, expanded, home);
-	return (expanded);
+	tmp = ft_fuse_array(splitted_commands, ";");
+	ft_split_free(splitted_commands);
+	return (tmp);
 }
